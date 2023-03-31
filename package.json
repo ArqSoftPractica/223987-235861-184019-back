@@ -1,0 +1,26 @@
+{
+  "name": "223987-235861-184019-back",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArqSoftPractica/223987-235861-184019-back.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ArqSoftPractica/223987-235861-184019-back/issues"
+  },
+  "homepage": "https://github.com/ArqSoftPractica/223987-235861-184019-back#readme",
+  "keywords": [],
+  "description": "",
+  "devDependencies": {
+    "eslint": "^8.37.0"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
