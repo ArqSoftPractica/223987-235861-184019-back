@@ -5,6 +5,7 @@ const dbUri = process.env.MY_SQL_URI || "localhost";
 const dbPassword = process.env.DB_PASSWORD || "asp2023**";
 const User = require('../models/users')
 const Company = require('../models/company')
+const Provider = require('../models/provider')
 
 const sequelize = new Sequelize(
     'asp-obli-1',
@@ -41,5 +42,6 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 db.company = Company(sequelize, DataTypes);
 db.user = User(sequelize, DataTypes, db.company);
+db.provider = Provider(sequelize, DataTypes);
 
 module.exports = db;
