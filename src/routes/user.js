@@ -5,6 +5,7 @@ const userController = new UsersController();
 
 Router.use(express.json());
 
-Router.get('/users', (req, res, next) => userController.getUser(req, res, next));
+Router.post('/users', (req, res, next) => userController.createUser(req, res, next));
+Router.get('/users', (req, res, next) => userController.getUsers(req, res, next));
 
 module.exports = Router

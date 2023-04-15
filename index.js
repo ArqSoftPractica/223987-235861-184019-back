@@ -1,13 +1,34 @@
 const express = require('express');
 
 const app = express();
+const RestError = require('./src/controllers/rest-error')
+const dbconnection  = require('./src/db/connection/connection');
+const user = require('./src/routes/user');
+require('dotenv').config();
 
-const user = require('./src/Users/routes/user');
 app.use(express.json());
 app.use(user);
 
+dbconnection.sync()
+  .then(() => {
+    console.log("Synced db.");
+  })
+  .catch((err) => {
+    console.log("Failed to sync db: " + err.message);
+  });
 
-const port = 3000;
-const server = app.listen(port, () => console.log(`Listening on port ${port}...`));
+app.use((err,req ,res, next) => {
+    let errorStatus = err instanceof RestError? err.status: 500
+    let logErrorMessage = `Error on endpoint: ${req.originalUrl} Error Status: ${errorStatus} Error Message:${err.message}`
+    if (req.user && req.user._id) {
+        logErrorMessage = `USER: ${req.user._id} ` + logErrorMessage
+    }
+    res.status(errorStatus);
+    res.json({error:err.message});
+});
+
+const server = app.listen(process.env.PORT ?? 3000, function(){
+    console.log(`Listening to port ${process.env.PORT ?? 3000}`);
+});
 
 module.exports = server;
