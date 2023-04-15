@@ -9,6 +9,49 @@ module.exports = class UsersController {
         this.userRepository = new UserRepository();
         this.companyRepository = new CompanyRepository();
     }
+
+    async login(req, res, next) {
+        const usr = req.body.username;
+        let pwd = req.body.password;
+        
+        if(!usr){
+            next(new RestError('username required', 400));    
+        }
+        if(!pwd){
+            next(new RestError('password required', 400));     
+        }
+
+        try {
+            let userReturned = await this.userRepository.getUserByUsernamePassword(usr, pwd);
+            if (userReturned) {
+                userReturned.password = undefined;
+                res.json(userReturned);
+            } else {
+                next(new RestError(`Either the user doesn\'t exist or user and password don\'t match`, 401));    
+            }
+        } catch (err) {
+            this.handleRepoError(err, next)
+        }
+    }
+
+    async getUser(req, res, next) {
+        const id = req.params.id;
+        if (!id) {
+            next(new RestError('id required', 400));    
+        }
+
+        try {
+            let userReturned = await this.userRepository.getUser(id);
+            if (userReturned) {
+                userReturned.password = undefined;
+                res.json(userReturned);
+            } else {
+                next(new RestError(`User not found`, 404));    
+            }
+        } catch (err) {
+            this.handleRepoError(err, next)
+        }
+    }
     
     async getUsers(req, res, next) {
         try {
@@ -30,9 +73,10 @@ module.exports = class UsersController {
             }
 
             req.body.companyId  = company.id;
-            req.body.password = undefined
 
             let userCreated = await this.userRepository.createUser(req.body);
+
+            req.body.password = undefined
             
             res.json(userCreated);
         } catch (err) {

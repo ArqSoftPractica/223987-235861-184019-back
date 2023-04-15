@@ -8,11 +8,7 @@ module.exports = class CompanyRepository {
     }
 
     async getCompanyByName(companyName) {
-        const company = await Company.findOne({
-            where: {
-                name: companyName,
-            },
-        });
+        const company = await Company.findOne({ where: { name: companyName } });
         return company;
     }
 

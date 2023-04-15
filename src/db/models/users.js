@@ -47,20 +47,19 @@ module.exports = (sequelize, DataTypes, Company) => {
             values: constants.roles.all,
             allowNull: false
         }
-    },  
-    {
-        beforeCreate: (user) => {
-            console.log(user);
-            user.password = crypto.createHash('sha256').update(user.password).digest('hex');
-        },
-        instanceMethods: {
-            isCorrectPassword: (password) => {
-                var hash = crypto.createHash('sha256').update(password).digest('hex');
-                return this.password === hash;
-            }
-        }
     });
     
+    User.beforeCreate((user, options) => {
+        console.log(user);
+        user.password = crypto.createHash('sha256').update(user.password).digest('hex');
+        return user
+    })
+
+    User.prototype.isCorrectPassword = async function(password) {
+        var hash = crypto.createHash('sha256').update(password).digest('hex');
+        return this.password === hash;
+    }
+
     User.belongsTo(Company, { foreignKey: 'companyId' });
 
     return User
