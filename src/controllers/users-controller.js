@@ -11,10 +11,10 @@ module.exports = class UsersController {
     }
 
     async login(req, res, next) {
-        const usr = req.body.username;
+        const email = req.body.email;
         let pwd = req.body.password;
         
-        if(!usr){
+        if(!email){
             next(new RestError('username required', 400));    
         }
         if(!pwd){
@@ -22,7 +22,7 @@ module.exports = class UsersController {
         }
 
         try {
-            let userReturned = await this.userRepository.getUserByUsernamePassword(usr, pwd);
+            let userReturned = await this.userRepository.getUserByEmailPassword(email, pwd);
             if (userReturned) {
                 userReturned.password = undefined;
                 res.json(userReturned);
