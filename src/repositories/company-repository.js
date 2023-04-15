@@ -1,4 +1,5 @@
-const Company = require('../db/models/company')
+const db = require('../db/connection/connection')
+const Company = db.company
 
 module.exports = class CompanyRepository {
     async createCompany(companyName) {
@@ -13,5 +14,9 @@ module.exports = class CompanyRepository {
             },
         });
         return company;
+    }
+
+    async getCompanies() {
+        return await Company.findAll();
     }
 }

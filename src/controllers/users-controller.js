@@ -30,6 +30,7 @@ module.exports = class UsersController {
             }
 
             req.body.companyId  = company.id;
+            req.body.password = undefined
 
             let userCreated = await this.userRepository.createUser(req.body);
             

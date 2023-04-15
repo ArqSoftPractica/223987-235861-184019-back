@@ -7,7 +7,10 @@ require('dotenv').config();
 app.use(express.json());
 const dbconnection  = require('./src/db/connection/connection');
 const user = require('./src/routes/user');
+const company = require('./src/routes/company');
+
 app.use(user)
+app.use(company)
 
 dbconnection.sequelize.sync()
   .then(() => {
