@@ -11,7 +11,10 @@ module.exports = (sequelize, DataTypes, Company) => {
         name: {
             type: DataTypes.STRING,
             allowNull: false,
-            unique: 'name_companyId',
+            unique: {
+                name: 'name_companyId',
+                msg: 'Product name already exists for this company',
+            },
             validate: {
                 notEmpty: true,
             }
@@ -19,10 +22,13 @@ module.exports = (sequelize, DataTypes, Company) => {
         companyId: {
             type: DataTypes.UUID,
             allowNull: false,
-            unique: 'name_companyId',
+            unique: {
+                name: 'name_companyId',
+                msg: 'Product already exists for this company',
+            },
             references: {
                 model: Company,
-                key: 'id',
+                key: 'id'
             },
         },
         description: {
