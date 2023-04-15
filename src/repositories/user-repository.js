@@ -1,4 +1,5 @@
-const User = require('../db/models/users')
+const db = require('../db/connection/connection')
+const User = db.user
 
 module.exports = class UserRepository {
     async createUser(userData) {

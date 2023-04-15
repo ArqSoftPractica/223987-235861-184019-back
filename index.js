@@ -2,14 +2,14 @@ const express = require('express');
 
 const app = express();
 const RestError = require('./src/controllers/rest-error')
-const dbconnection  = require('./src/db/connection/connection');
-const user = require('./src/routes/user');
 require('dotenv').config();
 
 app.use(express.json());
-app.use(user);
+const dbconnection  = require('./src/db/connection/connection');
+const user = require('./src/routes/user');
+app.use(user)
 
-dbconnection.sync()
+dbconnection.sequelize.sync()
   .then(() => {
     console.log("Synced db.");
   })
