@@ -8,9 +8,11 @@ app.use(express.json());
 const dbconnection  = require('./src/db/connection/connection');
 const user = require('./src/routes/user');
 const company = require('./src/routes/company');
+const provider = require('./src/routes/provider');
 
 app.use(user)
 app.use(company)
+app.use(provider)
 
 dbconnection.sequelize.sync()
   .then(() => {

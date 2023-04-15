@@ -15,7 +15,7 @@ module.exports = class UsersController {
         let pwd = req.body.password;
         
         if(!email){
-            next(new RestError('username required', 400));    
+            next(new RestError('email required', 400));    
         }
         if(!pwd){
             next(new RestError('password required', 400));     
