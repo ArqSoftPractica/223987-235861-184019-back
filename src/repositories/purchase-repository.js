@@ -3,29 +3,20 @@ const Purchase = db.purchase
 
 module.exports = class PurchaseRepository {
     async createPurchase(productData) {
-        /*const product = await Product.create({
-            name: productData.name,
-            companyId: productData.companyId,
-            description: productData.description,
-            image: productData.image,
-            price: productData.price,
-            totalProductCount: productData.totalProductCount
+        const purchase = await Purchase.create({
+            date: productData.date,
+            providerId: productData.providerId,
+            totalcost: productData.totalcost,
         });
-        return product
-        */
+        return purchase
     }
 
     async getPurchase(purchaseId) {
-        //return await Product.findOne({ where: { id: productId } });
+        return await Purchase.findOne({ where: { id: purchaseId } });
     }
 
-    async getPurchases(queryParams) {
-        /*let queryParamsDb = {};
-        if (queryParams['isActive'] != undefined) {
-            queryParamsDb['isActive'] = queryParams['isActive']
-        }
-        return await Product.findAll({ where: queryParamsDb });
-        */
+    async getPurchases() { 
+        return await Purchase.findAll();
     }
 
 }
