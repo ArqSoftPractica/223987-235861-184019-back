@@ -10,5 +10,6 @@ Router.get('/users', (req, res, next) => userController.getUsers(req, res, next)
 Router.get('/users/:id', (req, res, next) => userController.getUser(req, res, next));
 
 Router.post('/login', (req, res, next) => userController.login(req, res, next));
+Router.post('/sendRegisterLink', (req, res, next) => userController.sendRegisterLink(req, res, next));
 
 module.exports = Router
