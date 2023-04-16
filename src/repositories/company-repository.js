@@ -12,6 +12,11 @@ module.exports = class CompanyRepository {
         return company;
     }
 
+    async getCompany(companyId) {
+        const company = await Company.findOne({ where: { id: companyId } });
+        return company;
+    }
+
     async getCompanies() {
         return await Company.findAll();
     }
