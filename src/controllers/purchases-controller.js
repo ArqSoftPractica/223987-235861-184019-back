@@ -9,47 +9,39 @@ module.exports = class purchaseController {
     }
 
     async createPurchase(req, res, next) {
-        /*try {
-            let productCreated = await this.productRepository.createProduct(req.body);
-        
-            res.json(productCreated);
+        try{
+            let purchaseCreated = await this.purchaseRepository.createPurchase(req.body);
+            res.json(purchaseCreated);
         } catch (err) {
             this.handleRepoError(err, next)
-        }*/
+        }
     }
 
     async getPurchase(req, res, next) {
-        /*const id = req.params.id;
+        const id = req.params.id;
         if (!id) {
             next(new RestError('id required', 400));    
         }
-
-        try {
-            let product = await this.productRepository.getProduct(id);
-            if (product) {
-                res.json(product);
+        try{
+            let purchase = await this.purchaseRepository.getPurchase(id);
+            if (purchase) {
+                res.json(purchase);
             } else {
-                next(new RestError(`product not found`, 404));    
+                next(new RestError(`purchase not found`, 404));    
             }
-        } catch (err) {
+        }catch(err){
             this.handleRepoError(err, next)
         }
-        */
     }
 
     async getPurchases(req, res, next) {
-        /*try {
-            let queryParams = {};
-            if (req.query.isActive) {
-                queryParams['isActive'] = req.query.isActive == 'true'
-            }
-            let products = await this.productRepository.getProducts(queryParams);
+        try {
+            let purchases = await this.purchaseRepository.getPurchases();
             
-            res.json(products);
-        } catch (err) {
+            res.json(purchases);
+        } catch (err) { 
             this.handleRepoError(err, next)
         }
-        */
     }
 
 
