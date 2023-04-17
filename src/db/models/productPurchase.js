@@ -2,7 +2,7 @@ const uuid = require('uuid');
 const sequelize = require('../connection/connection')
 
 module.exports = (sequelize, DataTypes, Product, Purchase) => {
-    const ProductPurchase = sequelize.define('product-purchase', {
+    const ProductPurchase = sequelize.define('productPurchase', {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,

@@ -8,7 +8,7 @@ const Company = require('../models/company')
 const Provider = require('../models/provider')
 const Product = require('../models/product')
 const Purchase = require('../models/purchase')
-const ProductPurchase = require('../models/product-purchase')
+const ProductPurchase = require('../models/productPurchase')
 
 const sequelize = new Sequelize(
     'asp-obli-1',

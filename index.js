@@ -11,7 +11,7 @@ const company = require('./src/routes/company');
 const provider = require('./src/routes/provider');
 const product = require('./src/routes/product');
 const purchase = require('./src/routes/purchase');
-const productPurchase = require('./src/routes/product-purchase');
+const productPurchase = require('./src/routes/productPurchase');
 
 app.use(user)
 app.use(company)
