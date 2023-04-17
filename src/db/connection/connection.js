@@ -11,6 +11,7 @@ const Purchase = require('../models/purchase')
 const Sale = require('../models/sale')
 const ProductSale = require('../models/productSale')
 const SaleReport = require('../models/saleReport')
+const ProductPurchase = require('../models/product-purchase')
 
 const sequelize = new Sequelize(
     'asp-obli-1',
@@ -50,6 +51,7 @@ db.user = User(sequelize, DataTypes, db.company);
 db.provider = Provider(sequelize, DataTypes);
 db.product = Product(sequelize, DataTypes, db.company);
 db.purchase = Purchase(equelize, DataTypes, db.provider);
+db.productPurchase = ProductPurchase(sequelize, DataTypes, db.product, db.purchase);
 db.sale = Sale(sequelize, DataTypes, db.company);
 db.productSale = ProductSale(sequelize, DataTypes, db.product, db.sale, db.company);
 db.saleReport = SaleReport(sequelize, DataTypes, db.company, db.product);
