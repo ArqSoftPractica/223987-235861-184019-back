@@ -10,11 +10,15 @@ const user = require('./src/routes/user');
 const company = require('./src/routes/company');
 const provider = require('./src/routes/provider');
 const product = require('./src/routes/product');
+const purchase = require('./src/routes/purchase');
+const productPurchase = require('./src/routes/product-purchase');
 
 app.use(user)
 app.use(company)
 app.use(provider)
 app.use(product)
+app.use(purchase)
+app.use(productPurchase)
 
 dbconnection.sequelize.sync()
   .then(() => {
