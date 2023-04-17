@@ -47,7 +47,7 @@ db.company = Company(sequelize, DataTypes);
 db.user = User(sequelize, DataTypes, db.company);
 db.provider = Provider(sequelize, DataTypes);
 db.product = Product(sequelize, DataTypes, db.company);
-db.purchase = Purchase(equelize, DataTypes, db.provider);
+db.purchase = Purchase(sequelize, DataTypes, db.provider);
 db.productPurchase = ProductPurchase(sequelize, DataTypes, db.product, db.purchase);
 
 module.exports = db;
