@@ -3,6 +3,9 @@ const Router    = express.Router();
 const RestError = require('./rest-error');
 const UserRepository = require('../repositories/user-repository')
 const CompanyRepository = require('../repositories/company-repository');
+const fs = require('fs');
+const path = require("path");
+const jwt = require('jsonwebtoken'); 
 const { default: axios } = require('axios');
 const sendinblueApiKey = "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";
 const emailTemplateId = 1;
@@ -80,7 +83,14 @@ module.exports = class UsersController {
             let userReturned = await this.userRepository.getUserByEmailPassword(email, pwd);
             if (userReturned) {
                 userReturned.password = undefined;
-                res.json(userReturned);
+                if (!userReturned.userId) {
+                    userReturned.userId = userReturned._id
+                }
+                
+                const PRIVATE_KEY  = fs.readFileSync(path.resolve(__dirname, '../private.key'), 'utf8');
+                const jsonFromUser = JSON.stringify(userReturned);
+                const token = jwt.sign(jsonFromUser, PRIVATE_KEY, {algorithm:  "RS256"});
+                res.json({token:token});
             } else {
                 next(new RestError(`Either the user doesn\'t exist or user and password don\'t match`, 401));    
             }
