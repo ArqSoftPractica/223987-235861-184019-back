@@ -7,7 +7,7 @@ function verifyRole(rolesWithAccess) {
         let role = req.user.role
         
         if (role) {
-            if (role == 'ADMIN' || (rolesWithAccess && Object.values(rolesWithAccess).includes(role))) {
+            if (role == 'MASTER' || (rolesWithAccess && Object.values(rolesWithAccess).includes(role))) {
                 return next();
             } else {
                 res.status(403).json({error: "Unauthorized"});
