@@ -75,6 +75,7 @@ module.exports = class productController {
     async handleRepoError(err, next) {
         //error de base de datos.
         let http_code = (err.code == 11000)?409:400;
-        next(new RestError(err.message, http_code));
+        let errorDesription = err.errors[0].message ?? err.message
+        next(new RestError(errorDesription, http_code));
     }
 }

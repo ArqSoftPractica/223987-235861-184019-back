@@ -11,6 +11,7 @@ Router.post('/users', verifyToken, verifyPermission(), (req, res, next) => userC
 Router.get('/users', verifyToken, verifyPermission(), (req, res, next) => userController.getUsers(req, res, next));
 Router.get('/users/:id', verifyToken, verifyPermission(), (req, res, next) => userController.getUser(req, res, next));
 
+Router.post('/register', (req, res, next) => userController.register(req, res, next));
 Router.post('/login', (req, res, next) => userController.login(req, res, next));
 Router.post('/sendRegisterLink', verifyToken, verifyPermission(), (req, res, next) => userController.sendRegisterLink(req, res, next));
 
