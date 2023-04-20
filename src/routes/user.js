@@ -11,7 +11,7 @@ Router.use((req, res, next) => {
     res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
     next(); 
 });
-Router.post('/users', verifyToken, verifyPermission(), (req, res, next) => userController.createUser(req, res, next));
+Router.post('/users', (req, res, next) => userController.createUser(req, res, next));
 Router.get('/users', verifyToken, verifyPermission(), (req, res, next) => userController.getUsers(req, res, next));
 Router.get('/users/:id', verifyToken, verifyPermission(), (req, res, next) => userController.getUser(req, res, next));
 
