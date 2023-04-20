@@ -1,5 +1,5 @@
 const express = require('express');
-
+var cors = require('cors')
 const app = express();
 const RestError = require('./src/controllers/rest-error')
 require('dotenv').config();
@@ -10,7 +10,7 @@ const user = require('./src/routes/user');
 const company = require('./src/routes/company');
 const provider = require('./src/routes/provider');
 const product = require('./src/routes/product');
-
+app.use(cors())
 app.use(user)
 app.use(company)
 app.use(provider)

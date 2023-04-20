@@ -6,7 +6,11 @@ const verifyPermission = require("../authorization/role-check");
 const userController = new UsersController();
 
 Router.use(express.json());
-
+Router.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
+    next(); 
+});
 Router.post('/users', verifyToken, verifyPermission(), (req, res, next) => userController.createUser(req, res, next));
 Router.get('/users', verifyToken, verifyPermission(), (req, res, next) => userController.getUsers(req, res, next));
 Router.get('/users/:id', verifyToken, verifyPermission(), (req, res, next) => userController.getUser(req, res, next));
