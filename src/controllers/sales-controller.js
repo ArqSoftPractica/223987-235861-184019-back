@@ -1,6 +1,7 @@
 const express   = require('express');
 const Router    = express.Router();
 const RestError = require('./rest-error');
+const Bull = require('bull');
 const SaleRepository = require('../repositories/sale-repository');
 const ProductRepositroy = require('../repositories/product-repository');
 const ProductSaleRepository = require('../repositories/productSale-repository');
@@ -12,6 +13,7 @@ module.exports = class saleController {
         this.saleRepository = new SaleRepository();
         this.productSaleRepository = new ProductSaleRepository();
         this.comanyRepository = new CompanyRepository();
+        this.salesQueue = new Bull("sale-queue");
     }
 
     async createSale(req, res, next) {
@@ -34,7 +36,7 @@ module.exports = class saleController {
             try {
                 let saleCreated = await this.saleRepository.createSale(req.body);
                 try {
-                    let productSaleRepository = await this.productSaleRepository.createProductsSale(req.body.productsSold, company.id, saleCreated.id);            
+                    let productsSold = await this.productSaleRepository.createProductsSale(req.body.productsSold, company.id, saleCreated.id);            
                     let allSaleData = {
                         id: saleCreated.id,
                         date: saleCreated.date,
@@ -43,8 +45,14 @@ module.exports = class saleController {
                         clientName: saleCreated.clientName,
                         updatedAt: saleCreated.updatedAt,
                         createdAt: saleCreated.createdAt,
-                        productsSold: productSaleRepository,
+                        productsSold: productsSold,
                     }
+                    try {
+                        this.salesQueue.add(productsSold);
+                    } catch (err) {
+                        console.error(err)
+                    }
+
                     res.json(allSaleData);
                 } catch (err) {
                     let saleDeleted = await this.saleRepository.deleteSale(saleCreated.id);

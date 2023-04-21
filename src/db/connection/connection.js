@@ -9,6 +9,7 @@ const Provider = require('../models/provider')
 const Product = require('../models/product')
 const Sale = require('../models/sale')
 const ProductSale = require('../models/productSale')
+const SaleReport = require('../models/saleReport')
 
 const sequelize = new Sequelize(
     'asp-obli-1',
@@ -49,6 +50,6 @@ db.provider = Provider(sequelize, DataTypes);
 db.product = Product(sequelize, DataTypes, db.company);
 db.sale = Sale(sequelize, DataTypes, db.company);
 db.productSale = ProductSale(sequelize, DataTypes, db.product, db.sale, db.company);
-
+db.saleReport = SaleReport(sequelize, DataTypes, db.company, db.product);
 
 module.exports = db;

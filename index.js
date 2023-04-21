@@ -11,12 +11,15 @@ const company = require('./src/routes/company');
 const provider = require('./src/routes/provider');
 const product = require('./src/routes/product');
 const sale = require('./src/routes/sale');
+const salesReport = require('./src/routes/saleReport');
+var salesReportQueue = require("./src/service/sales-bull-queue-service");
 app.use(cors())
 app.use(user)
 app.use(company)
 app.use(provider)
 app.use(product)
 app.use(sale)
+app.use(salesReport)
 
 dbconnection.sequelize.sync()
   .then(() => {
@@ -39,5 +42,9 @@ app.use((err,req ,res, next) => {
 const server = app.listen(process.env.PORT ?? 3000, function(){
     console.log(`Listening to port ${process.env.PORT ?? 3000}`);
 });
+
+(async() => {
+  await salesReportQueue.initSalesReportQueue();
+})();
 
 module.exports = server;
