@@ -31,14 +31,16 @@ module.exports = class ProductRepository {
 
     async editProduct(id, body) {
         body.id = undefined;
-        let product = await db.sequelize.transaction(async (t) => {
-            return await Product.update(body, { where: {id: id}})
-                .then(([numOfRows, updatedRows]) => {
-                    return Product.findOne({ where: {id: id} });
-                });
-        })
+        let productUpdated = await db.sequelize.transaction(async (t) => {
+            const productUpdateResult = await Product.update(body, { where: {id: id}, transaction: t})
+            if (productUpdateResult == 0) {
+                throw Error(`Could not update product with id: ${id}`)
+            }
 
-        return product
+            const updatedProduct = await Product.findByPk(id, { transaction: t });
+            return updatedProduct
+        })
+        return productUpdated
     }
 
     async changeProductsStock(productsWithQuantityToChange, addToStock) {
