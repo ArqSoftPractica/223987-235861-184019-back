@@ -31,68 +31,59 @@ module.exports = class ProductRepository {
 
     async editProduct(id, body) {
         body.id = undefined;
-        let product = undefined
-        await lock.acquire(KEY_LOCK_EDIT_PRODUCT + id, await async function() {
-            product = await Product
-                .update(body, { where: {id: id}})
+        let product = await db.sequelize.transaction(async (t) => {
+            return await Product.update(body, { where: {id: id}})
                 .then(([numOfRows, updatedRows]) => {
                     return Product.findOne({ where: {id: id} });
                 });
         })
-        return product
-    }
 
-    async changeProductStock(id, stockNumberToChange) {
-        await lock.acquire(KEY_LOCK_EDIT_PRODUCT + id, await async function() {
-            let productToUpdate = await Product.findOne({ where: { id: id } });
-            if (!productToUpdate) {
-                throw Error(`No product with id: ${productToUpdate.id}`)
-            }
-            if (productToUpdate.isActive && productToUpdate.isActive == false) {
-                throw Error(`${productToUpdate.name} with id: ${productToUpdate.id} is INACTIVE.`)
-            }
-            let newStockValue = productToUpdate.stock + stockNumberToChange
-            if (newStockValue >= 0) {
-                await Product.update(
-                    {stock: newStockValue},
-                    { where: { id: id } }
-                )
-                .then(([numOfRows, updatedRows]) => {
-                    return Product.findOne({ where: {id: id} });
-                })
-            }
-        })
+        return product
     }
 
     async changeProductsStock(productsWithQuantityToChange, addToStock) {
         await db.sequelize.transaction(async (t) => {
             for (const item of productsWithQuantityToChange) {
-                await lock.acquire(KEY_LOCK_EDIT_PRODUCT + item.id, await async function() {
+                let correctQuantity;
+                if (item.productQuantity < 0) {
+                    let correctErrorWord = "add";
+                    if (addToStock == false) {
+                        correctErrorWord = "remove"
+                    }
+                    throw Error(`Can only ${correctErrorWord} to stock positive numbers. Check the attempt to add to the following product id: ${item.id}`)
+                }
+                if (addToStock == true) {
+                    correctQuantity = item.productQuantity   
+                } else{
+                    correctQuantity= -item.productQuantity
+                }
+
+                let whereCondition;
+                if (addToStock) {
+                    whereCondition = { id: item.id, isActive: true}
+                } else {
+                    whereCondition = { id: item.id, stock: { [db.Sequelize.Op.gte]: item.productQuantity }, isActive: true}
+                }
+
+                const updatedItems = await Product.update(
+                    { stock: db.sequelize.literal(`stock + ${correctQuantity}`)} ,
+                    { 
+                        where: whereCondition, 
+                        transaction: t 
+                    },
+                )
+                if (updatedItems == 0) {
                     let productToChangeQuantity = await Product.findOne({ where: { id: item.id } });
                     if (!productToChangeQuantity) {
                         throw Error(`No product with id: ${item.id}`)
                     }
+
                     if (productToChangeQuantity.isActive == false) {
                         throw Error(`${productToChangeQuantity.name} with id: ${productToChangeQuantity.id} is INACTIVE.`)
                     }
 
-                    let correctQuantity;
-                    if (addToStock == true) {
-                        correctQuantity = item.productQuantity
-                    } else{
-                        correctQuantity= -item.productQuantity
-                    }
-
-                    let newStock = productToChangeQuantity.stock + correctQuantity;
-                    if (newStock >= 0) {
-                        await Product.update(
-                            { stock: newStock} ,
-                            { where: { id: item.id } }
-                        )
-                    } else {
-                        throw Error(`No stock for product: ${productToChangeQuantity.name}, with id: ${productToChangeQuantity.id}. Current stock is ${productToChangeQuantity.stock}, while the purchase tries to get ${item.productQuantity}`)
-                    }
-                })
+                    throw Error(`No stock for product: ${productToChangeQuantity.name}, with id: ${productToChangeQuantity.id}. Current stock is ${productToChangeQuantity.stock}, while the purchase tries to get ${item.productQuantity}`)
+                }
             }
         })
     }
