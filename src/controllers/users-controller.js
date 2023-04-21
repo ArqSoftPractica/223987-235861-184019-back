@@ -222,7 +222,10 @@ module.exports = class UsersController {
     async handleRepoError(err, next) {
         //error de base de datos.
         let http_code = (err.code == 11000)?409:400;
-        let errorDesription = err.errors[0].message ?? err.message
+        let errorDesription = err.message
+        if (err.errors && err.errors.length > 0 && err.errors[0].message) {
+            errorDesription = err.errors[0].message
+        }
         next(new RestError(errorDesription, http_code));
     }
 }
