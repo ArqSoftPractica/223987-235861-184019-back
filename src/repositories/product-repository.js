@@ -1,8 +1,5 @@
 const db = require('../db/connection/connection')
 const Product = db.product
-var AsyncLock = require('async-lock');
-var lock = new AsyncLock();
-const KEY_LOCK_EDIT_PRODUCT = 'KEY_LOCK_EDIT_PRODUCT';
 
 module.exports = class ProductRepository {
     async createProduct(productData) {
