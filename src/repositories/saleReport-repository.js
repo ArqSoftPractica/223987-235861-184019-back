@@ -33,7 +33,8 @@ module.exports = class SaleReportRepository {
               } else {
                 upsertedVal = await SaleReport.create(
                   {
-                    id: saleReportRowToLook.id,
+                    companyId: item.companyId, 
+                    productId: item.productId,
                     totalSales: parseFloat(item.productQuantity)
                   }
                 );
