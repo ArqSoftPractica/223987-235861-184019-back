@@ -68,7 +68,18 @@ module.exports = class saleController {
         try{
             let sale = await this.saleRepository.getSale(id);
             if (sale) {
-                res.json(sale);
+                let productSales = await this.productSaleRepository.getProductSalesFromSale(id)
+                let totalSaleInfo = {
+                    id: sale.id,
+                    date: sale.date,
+                    companyId: sale.companyId,
+                    totalCost: sale.totalCost,
+                    clientName: sale.clientName,
+                    updatedAt: sale.updatedAt,
+                    createdAt: sale.createdAt,
+                    productsSold: productSales,
+                }
+                res.json(totalSaleInfo);
             } else {
                 next(new RestError(`sale not found`, 404));    
             }

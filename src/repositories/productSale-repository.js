@@ -40,4 +40,8 @@ module.exports = class ProductSaleRepository {
     async getProductsSale(productSaleId) {
         return await ProductSale.findAll({ where: { id: productSaleId } });
     }
+
+    async getProductSalesFromSale(saleId) {
+        return await ProductSale.findAll({ where: { saleId: saleId } });
+    }
 }
