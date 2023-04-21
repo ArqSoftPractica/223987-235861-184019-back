@@ -7,6 +7,8 @@ const User = require('../models/users')
 const Company = require('../models/company')
 const Provider = require('../models/provider')
 const Product = require('../models/product')
+const Sale = require('../models/sale')
+const ProductSale = require('../models/productSale')
 
 const sequelize = new Sequelize(
     'asp-obli-1',
@@ -45,5 +47,8 @@ db.company = Company(sequelize, DataTypes);
 db.user = User(sequelize, DataTypes, db.company);
 db.provider = Provider(sequelize, DataTypes);
 db.product = Product(sequelize, DataTypes, db.company);
+db.sale = Sale(sequelize, DataTypes, db.company);
+db.productSale = ProductSale(sequelize, DataTypes, db.product, db.sale, db.company);
+
 
 module.exports = db;
