@@ -40,12 +40,7 @@ module.exports = (sequelize, DataTypes, Company) => {
             type: DataTypes.FLOAT,
             allowNull: false,
         },
-        totalProductCount: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            defaultValue: 0,
-        },
-        purchasedProductCount: {
+        stock: {
             type: DataTypes.INTEGER,
             allowNull: false,
             defaultValue: 0,
@@ -56,10 +51,6 @@ module.exports = (sequelize, DataTypes, Company) => {
             defaultValue: true,
         }
     });
-
-    Product.prototype.stock = async function() {
-        return this.totalProductCount - purchasedProductCount;
-    }
 
     return Product;
 }
