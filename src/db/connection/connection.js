@@ -12,7 +12,6 @@ const ProductPurchase = require('../models/productPurchase')
 const Sale = require('../models/sale')
 const ProductSale = require('../models/productSale')
 const SaleReport = require('../models/saleReport')
-const ProductPurchase = require('../models/product-purchase')
 
 const sequelize = new Sequelize(
     'asp-obli-1',
