@@ -1,7 +1,7 @@
 const uuid = require('uuid');
 const sequelize = require('../connection/connection')
 
-module.exports = (sequelize, DataTypes, Product, Purchase) => {
+module.exports = (sequelize, DataTypes, Product, Purchase, Company) => {
     const ProductPurchase = sequelize.define('productPurchase', {
         id: {
             type: DataTypes.UUID,
@@ -21,6 +21,14 @@ module.exports = (sequelize, DataTypes, Product, Purchase) => {
             allowNull: false,
             references: {
                 model: Purchase,
+                key: 'id'
+            },
+        },
+        companyId: {   
+            type: DataTypes.UUID,
+            allowNull: false,
+            references: {
+                model: Company,
                 key: 'id'
             },
         },

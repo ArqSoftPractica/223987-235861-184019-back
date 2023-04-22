@@ -1,17 +1,20 @@
 const uuid = require('uuid');
 const sequelize = require('../connection/connection')
 
-module.exports = (sequelize, DataTypes, Provider) => {
+module.exports = (sequelize, DataTypes, Company, Provider) => {
     const Purchase = sequelize.define('pruchase', {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
-        date: {
-            type: DataTypes.DATE,
+        companyId: {   
+            type: DataTypes.UUID,
             allowNull: false,
-            defaultValue: DataTypes.NOW,
+            references: {
+                model: Company,
+                key: 'id'
+            },
         },
         providerId:{
             type: DataTypes.UUID,
@@ -21,6 +24,12 @@ module.exports = (sequelize, DataTypes, Provider) => {
                 key: 'id'
             },
         },
+        date: {
+            type: DataTypes.DATE,
+            allowNull: false,
+            defaultValue: DataTypes.NOW,
+        },
+        
         totalcost: {
             type: DataTypes.FLOAT,
             allowNull: false,

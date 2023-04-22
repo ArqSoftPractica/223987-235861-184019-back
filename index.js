@@ -14,7 +14,6 @@ const sale = require('./src/routes/sale');
 const salesReport = require('./src/routes/saleReport');
 var salesReportQueue = require("./src/service/sales-bull-queue-service");
 const purchase = require('./src/routes/purchase');
-const productPurchase = require('./src/routes/productPurchase');
 
 app.use(cors())
 app.use(user)
