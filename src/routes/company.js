@@ -8,5 +8,6 @@ const companyController = new CompanyController();
 Router.use(express.json());
 
 Router.get('/companies', verifyToken, (req, res, next) => companyController.getCompanies(req, res, next));
+Router.get('/companies/:id', verifyToken, (req, res, next) => companyController.getCompany(req, res, next));
 
 module.exports = Router

@@ -18,6 +18,24 @@ module.exports = class CompanyController {
         }
     }
 
+    async getCompany(req, res, next) {
+        const id = req.params.id;
+        if (!id) {
+            next(new RestError('id required', 400));    
+        }
+
+        try {
+            let company = await this.companyRepository.getCompany(id);
+            if (company) {
+                res.json(company);
+            } else {
+                next(new RestError(`Company not found`, 404));    
+            }
+        } catch (err) {
+            this.handleRepoError(err, next)
+        }
+    }
+
     async handleRepoError(err, next) {
         //error de base de datos.
         let http_code = (err.code == 11000)?409:400;

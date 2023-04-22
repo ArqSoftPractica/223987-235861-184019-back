@@ -42,5 +42,10 @@ module.exports = (sequelize, DataTypes, Product, Sale, Company) => {
         },
     });
 
+    Sale.hasMany(ProductSale, { foreignKey: 'saleId', as: 'saleProducts' });
+    ProductSale.belongsTo(Sale, { foreignKey: 'saleId', as: 'sale' });
+    Product.hasMany(ProductSale, { foreignKey: 'productId', as: 'productSales' });
+    ProductSale.belongsTo(Product, { foreignKey: 'productId', as: 'product' });
+
     return ProductSale;
 }
