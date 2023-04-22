@@ -1,5 +1,7 @@
 const db = require('../db/connection/connection')
 const Sale = db.sale
+const ProductSale = db.productSale
+const Product = db.product
 
 module.exports = class SaleRepository {
     async createSale(productData) {
@@ -17,6 +19,22 @@ module.exports = class SaleRepository {
 
     async getSales() { 
         return await Sale.findAll();
+    }
+
+    async getSalesByCompanyWithSaleProducts(companyId) { 
+        return await Sale.findAll({
+            where: { companyId: companyId },
+            include: [{
+                model: ProductSale,
+                as: 'saleProducts',
+                required: false,
+                include: [{
+                    model: Product,
+                    as: 'product',
+                    attributes: ['name']
+                }]
+            }],
+        });
     }
 
     async deleteSale(id) {

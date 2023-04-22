@@ -106,6 +106,25 @@ module.exports = class saleController {
         }
     }
 
+    async getSalesByCompanyWithSaleProducts(req, res, next) {
+        try {
+            let user = req.user
+            if (!user) {
+                next(new RestError(`Invalid token`, 404));    
+            }
+
+            if (!user.companyId) {
+                next(new RestError(`Invalid token`, 404));    
+            }
+
+            let sales = await this.saleRepository.getSalesByCompanyWithSaleProducts(user.companyId)
+            
+            res.json(sales);
+        } catch (err) { 
+            this.handleRepoError(err, next)
+        }
+    }
+
     async handleRepoError(err, next) {
         //error de base de datos.
         let http_code = (err.code == 11000)?409:400;
