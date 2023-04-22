@@ -160,7 +160,10 @@ module.exports = class UsersController {
                 const PRIVATE_KEY  = fs.readFileSync(path.resolve(__dirname, '../private.key'), 'utf8');
                 const jsonFromUser = JSON.stringify(userReturned);
                 const token = jwt.sign(jsonFromUser, PRIVATE_KEY, {algorithm:  "RS256"});
-                res.json({token:token});
+                res.json({
+                    token:token,
+                    user: userReturned
+                });
             } else {
                 next(new RestError(`Either the user doesn\'t exist or user and password don\'t match`, 401));    
             }
