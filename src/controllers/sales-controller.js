@@ -116,8 +116,34 @@ module.exports = class saleController {
             if (!user.companyId) {
                 next(new RestError(`Invalid token`, 404));    
             }
+            let startFilterDate = undefined
+            let endFilterDate = undefined
+            if (req.query.startDate) {
+                const parsedStartDate = Date.parse(req.query.startDate);
+                const parsedEndDate = Date.parse(req.query.endDate);
+                if (!isNaN(parsedStartDate) && !isNaN(parsedEndDate)) {
+                    startFilterDate = new Date(req.query.startDate)
+                    endFilterDate = new Date(req.query.endDate)
+                }
+            }
 
-            let sales = await this.saleRepository.getSalesByCompanyWithSaleProducts(user.companyId)
+            let offset = parseInt(req.query.offset, 10);
+            if (isNaN(offset)) {
+                offset = undefined
+            }
+
+            let pageSize = parseInt(req.query.pageSize, 10);
+            if (isNaN(offset)) {
+                pageSize = undefined
+            }
+
+            let sales = await this.saleRepository.getSalesByCompanyWithSaleProducts(
+                user.companyId, 
+                offset, 
+                pageSize,
+                startFilterDate,
+                endFilterDate
+            )
             
             res.json(sales);
         } catch (err) { 

@@ -21,9 +21,11 @@ module.exports = class SaleRepository {
         return await Sale.findAll();
     }
 
-    async getSalesByCompanyWithSaleProducts(companyId) { 
-        return await Sale.findAll({
-            where: { companyId: companyId },
+    async getSalesByCompanyWithSaleProducts(companyId, offset, pageSize, startDate, endDate) { 
+        let whereClause = { companyId: companyId }
+        
+        let query = {
+            where: whereClause,
             include: [{
                 model: ProductSale,
                 as: 'saleProducts',
@@ -34,7 +36,24 @@ module.exports = class SaleRepository {
                     attributes: ['name']
                 }]
             }],
-        });
+            order: [['date', 'DESC']]
+        }
+        
+        if (startDate && endDate) {
+            query['date'] = {
+                [db.Sequelize.Op.between]: [startDate, endDate]
+            }
+        }
+        
+        if (pageSize) {
+            query['limit'] = pageSize
+        }
+
+        if (offset) {
+            query['offset'] = offset
+        }
+
+        return await Sale.findAndCountAll(query);
     }
 
     async deleteSale(id) {
