@@ -2,8 +2,8 @@ const db = require('../db/connection/connection')
 const Company = db.company
 
 module.exports = class CompanyRepository {
-    async createCompany(companyName) {
-        const company = await Company.create({ name: companyName});
+    async createCompany(companyName, apiKey) {
+        const company = await Company.create({ name: companyName, apiKey: apiKey});
         return company;
     }
 
@@ -14,6 +14,11 @@ module.exports = class CompanyRepository {
 
     async getCompany(companyId) {
         const company = await Company.findOne({ where: { id: companyId } });
+        return company;
+    }
+    
+    async getCompanyByApiKey(apiKey) {
+        const company = await Company.findOne({ where: { apiKey: apiKey } });
         return company;
     }
 

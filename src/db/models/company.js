@@ -1,5 +1,6 @@
 const uuid = require('uuid');
-const sequelize = require('../connection/connection')
+const sequelize = require('../connection/connection');
+const crypto = require('crypto');
 
 module.exports = (sequelize, DataTypes) => {
     const Company = sequelize.define('company', {
@@ -15,8 +16,21 @@ module.exports = (sequelize, DataTypes) => {
             validate: {
                 notEmpty: true,
             }
-        }
+        },
+        apiKey: {
+            type: DataTypes.STRING
+        },
     });
+
+    Company.beforeCreate((company, options) => {
+        company.apiKey = crypto.createHash('sha256').update(company.apiKey).digest('hex');
+        return company
+    })
+
+    Company.prototype.isCorrectPassword = async function(apiKey) {
+        var hash = crypto.createHash('sha256').update(apiKey).digest('hex');
+        return this.apiKey === hash;
+    }
 
     return Company;
 }

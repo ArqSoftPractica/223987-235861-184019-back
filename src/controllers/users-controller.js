@@ -205,18 +205,28 @@ module.exports = class UsersController {
         try {
             let companyName = req.body.companyName;
             let company = await this.companyRepository.getCompanyByName(companyName);
-
+            let apiKey = undefined
             if (!company) {
-                company = await this.companyRepository.createCompany(companyName);
+                apiKey = crypto.randomBytes(32).toString('hex');
+                company = await this.companyRepository.createCompany(companyName, apiKey);
             }
 
             req.body.companyId  = company.id;
 
             let userCreated = await this.userRepository.createUser(req.body);
-
-            req.body.password = undefined
+            req.body.companyApiKey = apiKey
             
-            res.json(userCreated);
+            res.json({
+                id: userCreated.id,
+                userName: userCreated.userName,
+                password: userCreated.password,
+                email: userCreated.email,
+                companyId: userCreated.companyId,
+                role: userCreated.role,
+                updatedAt: userCreated.updatedAt,
+                createdAt: userCreated.createdAt,
+                companyApiKey: apiKey
+            });
         } catch (err) {
             this.handleRepoError(err, next)
         }
