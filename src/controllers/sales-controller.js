@@ -151,6 +151,39 @@ module.exports = class saleController {
         }
     }
 
+    async getProductSaleFromCompanyForRange(req, res, next) {
+        try {
+            let user = req.user
+            if (!user) {
+                next(new RestError(`Invalid token`, 404));    
+            }
+
+            if (!user.companyId) {
+                next(new RestError(`Invalid token`, 404));    
+            }
+            let startFilterDate = undefined
+            let endFilterDate = undefined
+            
+            if (req.query.startDate) {
+                const parsedStartDate = Date.parse(req.query.startDate);
+                const parsedEndDate = Date.parse(req.query.endDate);
+                if (!isNaN(parsedStartDate) && !isNaN(parsedEndDate)) {
+                    startFilterDate = new Date(req.query.startDate)
+                    endFilterDate = new Date(req.query.endDate)
+                }
+            }
+
+            let productSales = await this.productSaleRepository.getProductSaleFromCompanyForRange(
+                user.companyId, 
+                startFilterDate,
+                endFilterDate
+            )
+            res.json(productSales);
+        } catch (err) {
+            this.handleRepoError(err, next)
+        }
+    }
+
     async handleRepoError(err, next) {
         //error de base de datos.
         let http_code = (err.code == 11000)?409:400;

@@ -25,7 +25,7 @@ module.exports = class SaleRepository {
         let whereClause = { companyId: companyId }
         
         if (startDate && endDate) {
-            whereClause['date'] = {
+            whereClause['createdAt'] = {
                 [db.Sequelize.Op.between]: [startDate, endDate]
             }
         }
@@ -53,7 +53,17 @@ module.exports = class SaleRepository {
             query['offset'] = offset
         }
 
-        return await Sale.findAndCountAll(query);
+        const salesPromise = Sale.findAll(query);
+        const countPromise = Sale.count({where: whereClause});
+        const [sales, count] = await Promise.all([salesPromise, countPromise]);
+        return {
+            totalSalesCount: count,
+            offset: offset,
+            pageSize: pageSize,
+            startDate: startDate,
+            endDate: endDate,
+            sales: sales
+        };
     }
 
     async deleteSale(id) {
