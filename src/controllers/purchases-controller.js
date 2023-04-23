@@ -120,6 +120,22 @@ module.exports = class purchaseController {
         }
     }
 
+    async getPurchasesPerProvider(req, res, next) {
+        try{
+            const id = req.params.id;
+            const from = req.query.from;
+            const to = req.query.to;
+
+            let purchases = await this.purchaseRepository.getPurchasesPerProvider(id, from, to);
+            
+            res.json(purchases);
+
+        }catch(err){
+            this.handleRepoError(err, next)
+        }
+
+    }
+
     async handleRepoError(err, next) {
         //error de base de datos.
         let http_code = (err.code == 11000)?409:400;

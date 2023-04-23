@@ -23,4 +23,8 @@ module.exports = class PurchaseRepository {
         await Purchase.destroy({where: { id: id }});
     }
 
+    async getPurchasesPerProvider(providerId, from, to) {
+        return await Purchase.findAll({ where: { providerId: providerId, date: { [db.Sequelize.Op.between]: [from, to] } } });
+    }
+
 }
