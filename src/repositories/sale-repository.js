@@ -24,6 +24,12 @@ module.exports = class SaleRepository {
     async getSalesByCompanyWithSaleProducts(companyId, offset, pageSize, startDate, endDate) { 
         let whereClause = { companyId: companyId }
         
+        if (startDate && endDate) {
+            whereClause['date'] = {
+                [db.Sequelize.Op.between]: [startDate, endDate]
+            }
+        }
+
         let query = {
             where: whereClause,
             include: [{
@@ -38,13 +44,7 @@ module.exports = class SaleRepository {
             }],
             order: [['date', 'DESC']]
         }
-        
-        if (startDate && endDate) {
-            query['date'] = {
-                [db.Sequelize.Op.between]: [startDate, endDate]
-            }
-        }
-        
+
         if (pageSize) {
             query['limit'] = pageSize
         }
