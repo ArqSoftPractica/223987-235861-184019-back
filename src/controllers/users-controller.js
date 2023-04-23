@@ -89,7 +89,7 @@ module.exports = class UsersController {
     }
 
     async register(req, res, next) {
-        const token = req.query.token;
+        const token = req.body.token;
 
         let data = await RedisClient.get(token);
 
