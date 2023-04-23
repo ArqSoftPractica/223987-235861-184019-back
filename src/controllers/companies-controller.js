@@ -11,7 +11,9 @@ module.exports = class CompanyController {
     async getCompanies(req, res, next) {
         try {
             let companies = await this.companyRepository.getCompanies();
-            
+            companies.forEach(element => {
+                element.apiKey = undefined
+            });
             res.json(companies);
         } catch (err) {
             this.handleRepoError(err, next)
@@ -27,6 +29,7 @@ module.exports = class CompanyController {
         try {
             let company = await this.companyRepository.getCompany(id);
             if (company) {
+                company.apiKey = undefined
                 res.json(company);
             } else {
                 next(new RestError(`Company not found`, 404));    
