@@ -45,7 +45,7 @@ module.exports = class purchaseController {
                 let purchasCreated = await this.purchaseRepository.createPurchase(req.body);
                 try {
                     let productsPurchased = await this.productPurchaseRepository.createProductsPurchase(req.body.productsPurchased, company.id, purchasCreated.id);            
-                    /*let allPurchaseData = {
+                    let allPurchaseData = {
                         id: purchasCreated.id,
                         date: purchasCreated.date,
                         companyId: purchasCreated.companyId,
@@ -54,10 +54,9 @@ module.exports = class purchaseController {
                         updatedAt: purchasCreated.updatedAt,
                         createdAt: purchasCreated.createdAt,
                         productsPurchased: productsPurchased,
-                    }*/
-                    res.json(productsPurchased);
-                    //let addingProductsToStock = await this.productRepository.changeProductsStock(req.body.productsPurchased, true)
-                    //res.json(allPurchaseData);
+                    }
+                    let addingProductsToStock = await this.productRepository.changeProductsStock(req.body.productsPurchased, true)
+                    res.json(allPurchaseData);
                 } catch (err) {
                     let purchaseDeleted = await this.purchaseRepository.deletePurchase(purchasCreated.id);
                     this.handleRepoError(err, next)    
@@ -101,7 +100,20 @@ module.exports = class purchaseController {
     async getPurchases(req, res, next) {
         try {
             let purchases = await this.purchaseRepository.getPurchases();
-            
+            for (let i = 0; i < purchases.length; i++) {
+                let productPurchases = await this.productPurchaseRepository.getProductsPurchasesFromPurchase(purchases[i].id)
+                let totalPurchaseInfo = {
+                    id: purchases[i].id,
+                    date: purchases[i].date,
+                    companyId: purchases[i].companyId,
+                    providerId: purchases[i].providerId,
+                    totalCost: purchases[i].totalCost,
+                    updatedAt: purchases[i].updatedAt,
+                    createdAt: purchases[i].createdAt,
+                    productPurchases: productPurchases,
+                }
+                purchases[i] = totalPurchaseInfo;
+            }
             res.json(purchases);
         } catch (err) { 
             this.handleRepoError(err, next)

@@ -5,7 +5,7 @@ module.exports = class ProductPurchaseRepository {
     async createProductPurchase(productPurchaseData, companyId) {
         const productPurchase = await ProductPurchase.create({
             productId: productPurchaseData.productId,
-            purchaseId: productPurchaseData.purchaseId,
+            //purchaseId: productPurchaseData.purchaseId,
             companyId: companyId,
             productQuantity: productPurchaseData.productQuantity,
             productCost: productPurchaseData.productCost
@@ -17,7 +17,7 @@ module.exports = class ProductPurchaseRepository {
         const newList = [];
         for (let i = 0; i < productsData.length; i++) {
             let productToInsert = {
-                productId: productsData[i].productId,
+                productId: productsData[i].id,
                 productCost: productsData[i].productCost,
                 productQuantity: productsData[i].productQuantity,
                 companyId: companyId,
