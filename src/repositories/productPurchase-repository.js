@@ -5,7 +5,6 @@ module.exports = class ProductPurchaseRepository {
     async createProductPurchase(productPurchaseData, companyId) {
         const productPurchase = await ProductPurchase.create({
             productId: productPurchaseData.productId,
-            //purchaseId: productPurchaseData.purchaseId,
             companyId: companyId,
             productQuantity: productPurchaseData.productQuantity,
             productCost: productPurchaseData.productCost
@@ -43,5 +42,5 @@ module.exports = class ProductPurchaseRepository {
     async getProductsPurchasesFromPurchase(purchaseId) { 
         return await ProductPurchase.findAll({ where: { purchaseId: purchaseId } });
     }
-
+    
 }
