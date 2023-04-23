@@ -2,12 +2,12 @@ const db = require('../db/connection/connection')
 const Purchase = db.purchase
 
 module.exports = class PurchaseRepository {
-    async createPurchase(productData) {
+    async createPurchase(purchaseData) {
         const purchase = await Purchase.create({
-            companyId: productData.companyId,
-            date: productData.date,
-            providerId: productData.providerId,
-            totalcost: productData.totalcost,
+            companyId: purchaseData.companyId,
+            providerId: purchaseData.providerId,
+            date: purchaseData.date,
+            totalcost: purchaseData.totalcost,
         });
         return purchase
     }

@@ -21,13 +21,12 @@ module.exports = class purchaseController {
             if (!req.body.companyId) {
                 next(new RestError('companyIdRequired', 400));    
             }
+            if(!req.body.providerId) {
+                next(new RestError('providerId required.', 400));
+            }
 
             if (!req.body.productsPurchased || !Array.isArray(req.body.productsPurchased)) {
                 next(new RestError('productsPurchased required. You need to send an array of products please.', 400));    
-            }
-
-            if(!req.body.providerId) {
-                next(new RestError('providerId required.', 400));
             }
 
             let company = await this.companyRepository.getCompany(req.body.companyId)
@@ -56,7 +55,7 @@ module.exports = class purchaseController {
                         createdAt: purchasCreated.createdAt,
                         productsPurchased: productsPurchased,
                     }
-                    let addingProductsToStock = await this.productRepository.changeProductsStock(req.body.productPurchased, true)
+                    let addingProductsToStock = await this.productRepository.changeProductsStock(req.body.productsPurchased, true)
                     res.json(allPurchaseData);
                 } catch (err) {
                     let purchaseDeleted = await this.purchaseRepository.deletePurchase(purchasCreated.id);

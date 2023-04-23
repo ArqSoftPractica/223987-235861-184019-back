@@ -15,7 +15,7 @@ module.exports = class ProductPurchaseRepository {
 
     async createProductsPurchase(productsData, companyId, purchaseId) {
         const newList = [];
-        for(let i=0; i<productsData.length; i++) {
+        for (let i = 0; i < productsData.length; i++) {
             let productToInsert = {
                 productId: productsData[i].id,
                 productCost: productsData[i].productCost,
@@ -25,15 +25,15 @@ module.exports = class ProductPurchaseRepository {
             }
             newList.push(productToInsert);
         }
-        const productPurchase = await db.sequelize.transaction(async (t) => {
-            const createdProuctPurchases = [];
+        const productsPurchase = await db.sequelize.transaction(async (t) => {
+            const createdProductPurchases = [];
             for (const item of newList) {
-              let createdProuctPurchase = await ProductPurchase.create(item, { transaction: t });
-                createdProuctPurchases.push(createdProuctPurchase);
+              let createdProductPurchase = await ProductPurchase.create(item, { transaction: t });
+              createdProductPurchases.push(createdProductPurchase);
             }
-            return createdProuctPurchases
+            return createdProductPurchases
         })
-        return productPurchase
+        return productsPurchase
     }
 
     async getProductPurchase(productPurchaseId) {
