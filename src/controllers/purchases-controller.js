@@ -45,7 +45,7 @@ module.exports = class purchaseController {
                 let purchasCreated = await this.purchaseRepository.createPurchase(req.body);
                 try {
                     let productsPurchased = await this.productPurchaseRepository.createProductsPurchase(req.body.productsPurchased, company.id, purchasCreated.id);            
-                    let allPurchaseData = {
+                    /*let allPurchaseData = {
                         id: purchasCreated.id,
                         date: purchasCreated.date,
                         companyId: purchasCreated.companyId,
@@ -54,9 +54,10 @@ module.exports = class purchaseController {
                         updatedAt: purchasCreated.updatedAt,
                         createdAt: purchasCreated.createdAt,
                         productsPurchased: productsPurchased,
-                    }
-                    let addingProductsToStock = await this.productRepository.changeProductsStock(req.body.productsPurchased, true)
-                    res.json(allPurchaseData);
+                    }*/
+                    res.json(productsPurchased);
+                    //let addingProductsToStock = await this.productRepository.changeProductsStock(req.body.productsPurchased, true)
+                    //res.json(allPurchaseData);
                 } catch (err) {
                     let purchaseDeleted = await this.purchaseRepository.deletePurchase(purchasCreated.id);
                     this.handleRepoError(err, next)    

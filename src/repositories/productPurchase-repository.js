@@ -17,7 +17,7 @@ module.exports = class ProductPurchaseRepository {
         const newList = [];
         for (let i = 0; i < productsData.length; i++) {
             let productToInsert = {
-                productId: productsData[i].id,
+                productId: productsData[i].productId,
                 productCost: productsData[i].productCost,
                 productQuantity: productsData[i].productQuantity,
                 companyId: companyId,

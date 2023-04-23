@@ -59,9 +59,9 @@ module.exports = class ProductRepository {
 
                 let whereCondition;
                 if (addToStock) {
-                    whereCondition = { id: item.id, isActive: true}
+                    whereCondition = { id: item.productId, isActive: true}
                 } else {
-                    whereCondition = { id: item.id, stock: { [db.Sequelize.Op.gte]: item.productQuantity }, isActive: true}
+                    whereCondition = { id: item.productId, stock: { [db.Sequelize.Op.gte]: item.productQuantity }, isActive: true}
                 }
 
                 const updatedItems = await Product.update(
