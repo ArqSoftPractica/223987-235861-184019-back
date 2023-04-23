@@ -1,5 +1,6 @@
 const db = require('../db/connection/connection')
 const ProductSale = db.productSale
+const Product = db.product
 
 module.exports = class ProductSaleRepository {
     async createProductSale(productData, companyId) {
@@ -47,5 +48,26 @@ module.exports = class ProductSaleRepository {
 
     async getProductSalesFromSale(saleId) {
         return await ProductSale.findAll({ where: { saleId: saleId } });
+    }
+
+    async getProductSaleFromCompanyForRange(companyId, startDate, endDate) { 
+        let whereClause = { companyId: companyId }
+        
+        if (startDate && endDate) {
+            whereClause['createdAt'] = {
+                [db.Sequelize.Op.between]: [startDate, endDate]
+            }
+        }
+
+        return await ProductSale.findAll({
+            where: whereClause,
+            attributes: ['productId', [db.sequelize.fn('SUM', db.sequelize.col('productQuantity')), 'totalQuantity']],
+            group: ['productId'],
+            include: [{
+                model: Product,
+                as: 'product',
+                attributes: ['name']
+            }]
+        });
     }
 }
