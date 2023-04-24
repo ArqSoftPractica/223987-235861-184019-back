@@ -14,12 +14,23 @@ module.exports = class ProductRepository {
         return product
     }
 
-    async getProduct(productId) {
-        return await Product.findOne({ where: { id: productId } });
+    async getProduct(productId, companyId) {
+        let queryParamsDb = { id: productId };
+        
+        if (companyId) {
+            queryParamsDb.companyId = companyId;
+        }
+
+        return await Product.findOne({ where: queryParamsDb });
     }
 
-    async getProducts(queryParams) {
+    async getProducts(queryParams, companyId) {
         let queryParamsDb = {};
+        
+        if (companyId) {
+            queryParamsDb.companyId = companyId;
+        }
+
         if (queryParams['isActive'] != undefined) {
             queryParamsDb['isActive'] = queryParams['isActive']
         }
@@ -28,8 +39,10 @@ module.exports = class ProductRepository {
 
     async editProduct(id, body) {
         body.id = undefined;
+        let whereClause = {id: id};
+        whereClause.companyId = body.companyId;
         let productUpdated = await db.sequelize.transaction(async (t) => {
-            const productUpdateResult = await Product.update(body, { where: {id: id}, transaction: t})
+            const productUpdateResult = await Product.update(body, { where: whereClause, transaction: t})
             if (productUpdateResult == 0) {
                 throw Error(`Could not update product with id: ${id}`)
             }

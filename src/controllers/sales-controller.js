@@ -18,15 +18,17 @@ module.exports = class saleController {
 
     async createSale(req, res, next) {
         try{
-            if (!req.body.companyId) {
+            if (!req?.user?.companyId) {
                 next(new RestError('companyIdRequired', 400));    
             }
+
+            req.body.companyId = req?.user?.companyId
 
             if (!req.body.productsSold || !Array.isArray(req.body.productsSold)) {
                 next(new RestError('productsSold required. You need to send an array of products please.', 400));    
             }
 
-            let company = await this.comanyRepository.getCompany(req.body.companyId)
+            let company = await this.comanyRepository.getCompany(req.user.companyId)
 
             if (!company) {
                 next(new RestError('Company doesn\'t exist.', 404));    
@@ -73,10 +75,14 @@ module.exports = class saleController {
         if (!id) {
             next(new RestError('id required', 400));    
         }
+        let companyId = undefined;
+        if (req.user?.companyId) {
+            companyId = companyId;
+        }
         try{
             let sale = await this.saleRepository.getSale(id);
             if (sale) {
-                let productSales = await this.productSaleRepository.getProductSalesFromSale(id)
+                let productSales = await this.productSaleRepository.getProductSalesFromSale(id, companyId)
                 let totalSaleInfo = {
                     id: sale.id,
                     date: sale.date,
@@ -98,7 +104,7 @@ module.exports = class saleController {
 
     async getSales(req, res, next) {
         try {
-            let sales = await this.saleRepository.getSales();
+            let sales = await this.saleRepository.getSales(req.user?.companyId);
             
             res.json(sales);
         } catch (err) { 
@@ -161,6 +167,7 @@ module.exports = class saleController {
             if (!user.companyId) {
                 next(new RestError(`Invalid token`, 404));    
             }
+            
             let startFilterDate = undefined
             let endFilterDate = undefined
             

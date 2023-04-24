@@ -94,29 +94,37 @@ module.exports = class UsersController {
     }
 
     async register(req, res, next) {
-        const token = req.body.token;
+        try {
+            const token = req.body.token;
+        
+            if (!token) {
+                next(new RestError('Register token required in body. Email should have had that token', 400));
+            }
 
-        let data = await RedisClient.get(token);
+            let data = await RedisClient.get(token);
 
-        if (data) {
-            const tokenData = JSON.parse(data);
-            if (tokenData) {
-                let company = this.companyRepository.getCompany(tokenData.companyId)
-                if (company) {
-                    req.body.companyName = undefined
-                    if (tokenData.role && tokenData.companyId) {
-                        try {
-                            req.body.role = tokenData.role
-                            req.body.companyId = tokenData.companyId;
-                
-                            let userCreated = await this.userRepository.createUser(req.body);
-                
-                            req.body.password = undefined
-                            //Delete token so that the invite doesn't work anymore
-                            RedisClient.del(token);
-                            res.json(userCreated);
-                        } catch (err) {
-                            this.handleRepoError(err, next)
+            if (data) {
+                const tokenData = JSON.parse(data);
+                if (tokenData) {
+                    let company = this.companyRepository.getCompany(tokenData.companyId)
+                    if (company) {
+                        req.body.companyName = undefined
+                        if (tokenData.role && tokenData.companyId) {
+                            try {
+                                req.body.role = tokenData.role
+                                req.body.companyId = tokenData.companyId;
+                    
+                                let userCreated = await this.userRepository.createUser(req.body);
+                    
+                                req.body.password = undefined
+                                //Delete token so that the invite doesn't work anymore
+                                RedisClient.del(token);
+                                res.json(userCreated);
+                            } catch (err) {
+                                this.handleRepoError(err, next)
+                            }
+                        } else {
+                            this.clearTokenFromRedisSendError(token, next);
                         }
                     } else {
                         this.clearTokenFromRedisSendError(token, next);
@@ -127,8 +135,8 @@ module.exports = class UsersController {
             } else {
                 this.clearTokenFromRedisSendError(token, next);
             }
-        } else {
-            this.clearTokenFromRedisSendError(token, next);
+        } catch (err) {
+            this.handleRepoError(err, next)
         }
     }
 
@@ -184,7 +192,8 @@ module.exports = class UsersController {
         }
 
         try {
-            let userReturned = await this.userRepository.getUser(id);
+            let companyId = req.user?.companyId
+            let userReturned = await this.userRepository.getUser(id, companyId);
             if (userReturned) {
                 userReturned.password = undefined;
                 res.json(userReturned);
@@ -198,7 +207,8 @@ module.exports = class UsersController {
     
     async getUsers(req, res, next) {
         try {
-            let users = await this.userRepository.getUsers();
+            let companyId = req.user?.companyId
+            let users = await this.userRepository.getUsers(companyId);
             
             res.json(users);
         } catch (err) {
