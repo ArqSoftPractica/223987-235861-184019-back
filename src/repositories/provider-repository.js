@@ -7,29 +7,41 @@ module.exports = class ProviderRepository {
             name: providerData.name,
             address: providerData.address,
             email: providerData.email,
-            phone: providerData.phone
+            phone: providerData.phone,
+            companyId: providerData.companyId
         });
         return provider
     }
 
-    async getProvider(providerId) {
-        return await Provider.findOne({ where: { id: providerId } });
+    async getProvider(providerId, companyId) {
+        let whereClause = { id: providerId }
+        if (companyId) {
+            whereClause.companyId = companyId
+        }
+        return await Provider.findOne({ where: whereClause });
     }
 
-    async getProviders(queryParams) {
+    async getProviders(queryParams, companyId) {
         let queryParamsDb = {};
-        if (queryParams['isActive'] != undefined) {
-            queryParamsDb['isActive'] = queryParams['isActive']
+        if (queryParams.isActive != undefined) {
+            queryParamsDb.isActive = queryParams.isActive
+        }
+        if (companyId) {
+            queryParamsDb.companyId = companyId
         }
         return await Provider.findAll({ where: queryParamsDb });
     }
 
-    async editProvider(id, body) {
+    async editProvider(id, body, companyId) {
         body.id = undefined;
+        let queryParamsDb = {id: id}
+        if (body.companyId) {
+            queryParamsDb.companyId = companyId
+        }
         return Provider
-                .update(body, { where: {id: id}})
+                .update(body, { where: queryParamsDb})
                 .then(([numOfRows, updatedRows]) => {
-                    return Provider.findOne({ where: {id: id} });
+                    return Provider.findOne({ where: queryParamsDb });
                 })
     }
 }
