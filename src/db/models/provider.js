@@ -1,7 +1,7 @@
 const uuid = require('uuid');
-const sequelize = require('../connection/connection')
+const sequelize = require('../connection/connection') 
 
-module.exports = (sequelize, DataTypes) => {
+module.exports = (sequelize, DataTypes, Company) => {
     const Provider = sequelize.define('provider', {
         id: {
             type: DataTypes.UUID,
@@ -36,6 +36,14 @@ module.exports = (sequelize, DataTypes) => {
             validate: {
                 notEmpty: true,
             }
+        },
+        companyId: {   
+            type: DataTypes.UUID,
+            allowNull: false,
+            references: {
+                model: Company,
+                key: 'id'
+            },
         },
         isActive: {
             type: DataTypes.BOOLEAN,
