@@ -221,7 +221,10 @@ module.exports = class UsersController {
             let companyName = req.body.companyName;
             let company = await this.companyRepository.getCompanyByName(companyName);
             let apiKey = undefined
-            if (!company) {
+            
+            if (company) {
+                next(new RestError(`Company with that name already registered:\n\n  • Select a new name to create a Company.\n\n    • Ask a Company Admin send you an invite link or contact support.`, 400));    
+            } else {
                 apiKey = crypto.randomBytes(32).toString('hex');
                 company = await this.companyRepository.createCompany(companyName, apiKey);
             }
