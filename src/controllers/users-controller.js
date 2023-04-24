@@ -20,7 +20,12 @@ module.exports = class UsersController {
 
     async sendRegisterLink(req, res, next) {
         const email = req.body.email;
-        let companyId = req.body.companyId;
+        
+        if (!req.user) {
+            next(new RestError('User needs to be logged in and be part of a company', 400));    
+        }
+        
+        let companyId = req.user.companyId;
         const roleToAssign = req.body.role;
         
         if(!email){
@@ -28,7 +33,7 @@ module.exports = class UsersController {
         }
 
         if(!companyId){
-            next(new RestError('companyId required', 400));     
+            next(new RestError('User needs to be be part of a company', 400));     
         }
 
         if(!roleToAssign){

@@ -10,6 +10,7 @@ module.exports = class productController {
 
     async createProduct(req, res, next) {
         try {
+            req.body.companyId = req.user.companyId;
             let productCreated = await this.productRepository.createProduct(req.body);
         
             res.json(productCreated);
@@ -53,6 +54,7 @@ module.exports = class productController {
     async editProduct(req, res, next) {
         try {
             const id = req.params.id;
+            req.body.companyId = req.user.companyId;
             let product = await this.productRepository.editProduct(id, req.body);
             
             res.json(product);
