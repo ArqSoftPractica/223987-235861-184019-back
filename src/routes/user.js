@@ -14,8 +14,10 @@ Router.use((req, res, next) => {
 
 //No token required
 Router.post('/users', (req, res, next) => userController.createUser(req, res, next));
-Router.post('/register', (req, res, next) => userController.register(req, res, next));
 Router.post('/login', (req, res, next) => userController.login(req, res, next));
+
+//Register token sent through link required in body
+Router.post('/register', (req, res, next) => userController.register(req, res, next));
 
 //Need token and permission
 Router.get('/users', verifyToken, verifyPermission(), (req, res, next) => userController.getUsers(req, res, next));
