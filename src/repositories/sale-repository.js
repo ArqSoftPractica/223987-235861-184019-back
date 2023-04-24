@@ -13,12 +13,20 @@ module.exports = class SaleRepository {
         return sale
     }
 
-    async getSale(saleId) {
-        return await Sale.findOne({ where: { id: saleId } });
+    async getSale(saleId, companyId) {
+        let whereClause = { id: saleId }
+        if (companyId) {
+            whereClause.companyId = companyId
+        }
+        return await Sale.findOne({ where: whereClause });
     }
 
-    async getSales() { 
-        return await Sale.findAll();
+    async getSales(companyId) { 
+        let whereClause = { }
+        if (companyId) {
+            whereClause.companyId = companyId
+        }
+        return await Sale.findAll({ where: whereClause });
     }
 
     async getSalesByCompanyWithSaleProducts(companyId, offset, pageSize, startDate, endDate) { 

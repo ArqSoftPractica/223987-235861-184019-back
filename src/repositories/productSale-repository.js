@@ -46,8 +46,12 @@ module.exports = class ProductSaleRepository {
         return await ProductSale.findAll({ where: { companyId: companyId } });
     }
 
-    async getProductSalesFromSale(saleId) {
-        return await ProductSale.findAll({ where: { saleId: saleId } });
+    async getProductSalesFromSale(saleId, companyId) {
+        let whereClause = { saleId: saleId }
+        if (companyId) {
+            whereClause.companyId = companyId
+        }
+        return await ProductSale.findAll({ where: whereClause });
     }
 
     async getProductSaleFromCompanyForRange(companyId, startDate, endDate) { 

@@ -21,7 +21,7 @@ module.exports = class CompanyController {
     }
 
     async getCompany(req, res, next) {
-        const id = req.params.id;
+        const id = req.params.companyId;
         if (!id) {
             next(new RestError('id required', 400));    
         }

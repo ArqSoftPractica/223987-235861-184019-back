@@ -26,7 +26,7 @@ module.exports = class productController {
         }
 
         try {
-            let product = await this.productRepository.getProduct(id);
+            let product = await this.productRepository.getProduct(id, req.user?.companyId);
             if (product) {
                 res.json(product);
             } else {
@@ -43,7 +43,8 @@ module.exports = class productController {
             if (req.query.isActive) {
                 queryParams['isActive'] = req.query.isActive == 'true'
             }
-            let products = await this.productRepository.getProducts(queryParams);
+
+            let products = await this.productRepository.getProducts(queryParams, req?.user?.companyId);
             
             res.json(products);
         } catch (err) {
@@ -66,6 +67,7 @@ module.exports = class productController {
     async deactivateProduct(req, res, next) {
         try {
             const id = req.params.id;
+            req.body.companyId = req.user?.companyId;
             let product = await this.productRepository.editProduct(id, {isActive: false});
             
             res.json(product);

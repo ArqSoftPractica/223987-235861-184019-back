@@ -18,9 +18,12 @@ module.exports = class purchaseController {
 
     async createPurchase(req, res, next) {
         try{
-            if (!req.body.companyId) {
+            if (!req?.user?.companyId) {
                 next(new RestError('companyIdRequired', 400));    
             }
+            
+            req.body.companyId = req?.user?.companyId
+
             if(!req.body.providerId) {
                 next(new RestError('providerId required.', 400));
             }
@@ -29,7 +32,7 @@ module.exports = class purchaseController {
                 next(new RestError('productsPurchased required. You need to send an array of products please.', 400));    
             }
 
-            let company = await this.companyRepository.getCompany(req.body.companyId)
+            let company = await this.companyRepository.getCompany(req.user.companyId)
 
             if (!company) {
                 next(new RestError('Company doesn\'t exist.', 404));    
@@ -75,7 +78,7 @@ module.exports = class purchaseController {
             next(new RestError('id required', 400));    
         }
         try{
-            let purchase = await this.purchaseRepository.getPurchase(id);
+            let purchase = await this.purchaseRepository.getPurchase(id, req?.user?.companyId);
             if (purchase) {
                 let productPurchases = await this.productPurchaseRepository.getProductsPurchasesFromPurchase(id)
                 let totalPurchaseInfo = {
@@ -99,7 +102,7 @@ module.exports = class purchaseController {
 
     async getPurchases(req, res, next) {
         try {
-            let purchases = await this.purchaseRepository.getPurchases();
+            let purchases = await this.purchaseRepository.getPurchases(req?.user?.companyId);
             for (let i = 0; i < purchases.length; i++) {
                 let productPurchases = await this.productPurchaseRepository.getProductsPurchasesFromPurchase(purchases[i].id)
                 let totalPurchaseInfo = {

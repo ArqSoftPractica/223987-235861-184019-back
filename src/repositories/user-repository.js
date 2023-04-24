@@ -27,11 +27,18 @@ module.exports = class UserRepository {
         }
     }
 
-    async getUser(userId) {
-        return await User.findOne({ where: { id: userId } });
+    async getUser(userId, companyId) {
+        const whereClause = { id: userId }
+        if (companyId) {
+            whereClause.companyId = companyId
+        }
+        return await User.findOne({ where: whereClause });
     }
 
-    async getUsers() {
-        return await User.findAll();
+    async getUsers(companyId) {
+        if (companyId) {
+            whereClause.companyId = companyId
+        }
+        return await User.findAll({where: whereClause});
     }
 }

@@ -12,15 +12,27 @@ module.exports = class PurchaseRepository {
         return purchase
     }
 
-    async getPurchase(purchaseId) {
-        return await Purchase.findOne({ where: { id: purchaseId } });
+    async getPurchase(purchaseId, companyId) {
+        let whereClause = { id: purchaseId }
+        if (companyId) {
+            whereClause.companyId = companyId
+        }
+        return await Purchase.findOne({ where: whereClause });
     }
 
-    async getPurchases() { 
-        return await Purchase.findAll();
+    async getPurchases(companyId) { 
+        let whereClause = {}
+        if (companyId) {
+            whereClause.companyId = companyId
+        }
+        return await Purchase.findAll({ where: whereClause });
     }
-    async deletePurchase(id) {
-        await Purchase.destroy({where: { id: id }});
+    async deletePurchase(purchaseId, companyId) {
+        let whereClause = { id: purchaseId }
+        if (companyId) {
+            whereClause.companyId = companyId
+        }
+        await Purchase.destroy({where: whereClause});
     }
 
     async getPurchasesPerProvider(providerId, from, to) {
