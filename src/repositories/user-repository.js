@@ -36,6 +36,7 @@ module.exports = class UserRepository {
     }
 
     async getUsers(companyId) {
+        const whereClause = { }
         if (companyId) {
             whereClause.companyId = companyId
         }
