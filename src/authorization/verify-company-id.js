@@ -4,7 +4,7 @@ const crypto = require('crypto')
 
 async function verifyCompanyId(req, res, next) {
     try {
-        let companyId = req.body?.user?.companyId;
+        let companyId = req.user?.companyId;
         const paramCompanyId= req.params?.companyId;
         if (paramCompanyId && companyId == paramCompanyId) {
             try {                
@@ -13,7 +13,7 @@ async function verifyCompanyId(req, res, next) {
                 return res.status(401).send({ error: error.message });
             }
         } else {
-            let errorMessage = 'No api key provided. Api key is required.'
+            let errorMessage = 'You do not have permissions for this company.'
             return res.status(401).send({ error:errorMessage });
         }
     } catch (error) {
