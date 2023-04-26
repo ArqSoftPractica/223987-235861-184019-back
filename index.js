@@ -1,3 +1,4 @@
+require('newrelic');
 const express = require('express');
 var cors = require('cors')
 const app = express();
