@@ -67,8 +67,8 @@ module.exports = class productController {
     async deactivateProduct(req, res, next) {
         try {
             const id = req.params.id;
-            req.body.companyId = req.user?.companyId;
-            let product = await this.productRepository.editProduct(id, {isActive: false});
+            const body = {isActive: false, companyId: req.user?.companyId}
+            let product = await this.productRepository.editProduct(id, body);
             
             res.json(product);
         } catch (err) {
