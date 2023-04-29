@@ -22,29 +22,29 @@ module.exports = class UsersController {
         const email = req.body.email;
         
         if (!req.user) {
-            next(new RestError('User needs to be logged in and be part of a company', 400));    
+            return next(new RestError('User needs to be logged in and be part of a company', 400));  
         }
         
         let companyId = req.user.companyId;
         const roleToAssign = req.body.role;
         
         if(!email){
-            next(new RestError('Recipient email required', 400));    
+            return next(new RestError('Recipient email required', 400));    
         }
 
         if(!companyId){
-            next(new RestError('User needs to be be part of a company', 400));     
+            return next(new RestError('User needs to be be part of a company', 400));  
         }
 
         if(!roleToAssign){
-            next(new RestError('role required', 400));     
+            return next(new RestError('role required', 400));     
         }
 
         try {
             let company = await this.companyRepository.getCompany(companyId);
 
             if (!company) {
-                next(new RestError('No company with the suggested companyId', 400));     
+                return next(new RestError('No company with the suggested companyId', 400));     
             }
 
             const token = crypto.randomBytes(32).toString('hex');
@@ -85,7 +85,7 @@ module.exports = class UsersController {
                     }
                 })
                 .catch(function (error) {
-                    next(new RestError(error.message, error.response.status));
+                    return next(new RestError(error.message, error.response.status));
                 });
         } catch (err) {
             this.handleRepoError(err, next)
@@ -97,7 +97,7 @@ module.exports = class UsersController {
             const token = req.body.token;
         
             if (!token) {
-                next(new RestError('Register token required in body. Email should have had that token', 400));
+                return next(new RestError('Register token required in body. Email should have had that token', 400));
             }
 
             let data = await RedisClient.get(token);
@@ -142,12 +142,7 @@ module.exports = class UsersController {
     clearTokenFromRedisSendError(token, next) {
         //deleting token for security
         RedisClient.del(token);
-        next(new RestError('Invald, expired or already used registration link', 400));
-    }
-
-    deleteTokenExecuteNext(next, token) {
-        // RedisClient.del(token)
-        next()
+        return next(new RestError('Invald, expired or already used registration link', 400));
     }
 
     async login(req, res, next) {
@@ -155,10 +150,10 @@ module.exports = class UsersController {
         let pwd = req.body.password;
         
         if(!email){
-            next(new RestError('email required', 400));    
+            return next(new RestError('email required', 400));  
         }
         if(!pwd){
-            next(new RestError('password required', 400));     
+            return next(new RestError('password required', 400));  
         }
 
         try {
@@ -177,7 +172,7 @@ module.exports = class UsersController {
                     user: userReturned
                 });
             } else {
-                next(new RestError(`Either the user doesn\'t exist or user and password don\'t match`, 401));    
+                return next(new RestError(`Either the user doesn\'t exist or user and password don\'t match`, 401));    
             }
         } catch (err) {
             this.handleRepoError(err, next)
@@ -187,7 +182,7 @@ module.exports = class UsersController {
     async getUser(req, res, next) {
         const id = req.params.id;
         if (!id) {
-            next(new RestError('id required', 400));    
+            return next(new RestError('id required', 400));   
         }
 
         try {
@@ -197,7 +192,7 @@ module.exports = class UsersController {
                 userReturned.password = undefined;
                 res.json(userReturned);
             } else {
-                next(new RestError(`User not found`, 404));    
+                return next(new RestError(`User not found`, 404));    
             }
         } catch (err) {
             this.handleRepoError(err, next)
@@ -222,7 +217,7 @@ module.exports = class UsersController {
             let apiKey = undefined
             
             if (company) {
-                next(new RestError(`Company with that name already registered:\n\n  • Select a new name to create a Company.\n\n    • Ask a Company Admin send you an invite link or contact support.`, 400));    
+                return next(new RestError(`Company with that name already registered:\n\n  • Select a new name to create a Company.\n\n    • Ask a Company Admin send you an invite link or contact support.`, 400));    
             } else {
                 apiKey = crypto.randomBytes(32).toString('hex');
                 company = await this.companyRepository.createCompany(companyName, apiKey);
@@ -256,6 +251,6 @@ module.exports = class UsersController {
         if (err.errors && err.errors.length > 0 && err.errors[0].message) {
             errorDesription = err.errors[0].message
         }
-        next(new RestError(errorDesription, http_code));
+        return next(new RestError(errorDesription, http_code));
     }
 }

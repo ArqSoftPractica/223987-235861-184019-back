@@ -23,7 +23,7 @@ module.exports = class CompanyController {
     async getCompany(req, res, next) {
         const id = req.params.companyId;
         if (!id) {
-            next(new RestError('id required', 400));    
+            return next(new RestError('id required', 400));    
         }
 
         try {
@@ -32,7 +32,7 @@ module.exports = class CompanyController {
                 company.apiKey = undefined
                 res.json(company);
             } else {
-                next(new RestError(`Company not found`, 404));    
+                return next(new RestError(`Company not found`, 404));    
             }
         } catch (err) {
             this.handleRepoError(err, next)
@@ -46,6 +46,6 @@ module.exports = class CompanyController {
         if (err.errors && err.errors.length > 0 && err.errors[0].message) {
             errorDesription = err.errors[0].message
         }
-        next(new RestError(errorDesription, http_code));
+        return next(new RestError(errorDesription, http_code));
     }
 }
