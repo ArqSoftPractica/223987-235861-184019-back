@@ -19,19 +19,19 @@ module.exports = class saleController {
     async createSale(req, res, next) {
         try{
             if (!req?.user?.companyId) {
-                next(new RestError('companyIdRequired', 400));    
+                return next(new RestError('companyIdRequired', 400));    
             }
 
             req.body.companyId = req?.user?.companyId
 
             if (!req.body.productsSold || !Array.isArray(req.body.productsSold)) {
-                next(new RestError('productsSold required. You need to send an array of products please.', 400));    
+                return next(new RestError('productsSold required. You need to send an array of products please.', 400));  
             }
 
             let company = await this.comanyRepository.getCompany(req.user.companyId)
 
             if (!company) {
-                next(new RestError('Company doesn\'t exist.', 404));    
+                return next(new RestError('Company doesn\'t exist.', 404));
             }
 
             let removingProductsFromStock = await this.productRepository.changeProductsStock(req.body.productsSold, false)
@@ -73,7 +73,7 @@ module.exports = class saleController {
     async getSale(req, res, next) {
         const id = req.params.id;
         if (!id) {
-            next(new RestError('id required', 400));    
+            return next(new RestError('id required', 400));    
         }
         let companyId = undefined;
         if (req.user?.companyId) {
@@ -95,7 +95,7 @@ module.exports = class saleController {
                 }
                 res.json(totalSaleInfo);
             } else {
-                next(new RestError(`sale not found`, 404));    
+                return next(new RestError(`sale not found`, 404));    
             }
         }catch(err){
             this.handleRepoError(err, next)
@@ -116,11 +116,11 @@ module.exports = class saleController {
         try {
             let user = req.user
             if (!user) {
-                next(new RestError(`Invalid token`, 404));    
+                return next(new RestError(`Invalid token`, 404));    
             }
 
             if (!user.companyId) {
-                next(new RestError(`Invalid token`, 404));    
+                return next(new RestError(`Invalid token`, 404));    
             }
             let startFilterDate = undefined
             let endFilterDate = undefined
@@ -161,11 +161,11 @@ module.exports = class saleController {
         try {
             let user = req.user
             if (!user) {
-                next(new RestError(`Invalid token`, 404));    
+                return next(new RestError(`Invalid token`, 404));    
             }
 
             if (!user.companyId) {
-                next(new RestError(`Invalid token`, 404));    
+                return next(new RestError(`Invalid token`, 404));    
             }
             
             let startFilterDate = undefined
@@ -198,6 +198,6 @@ module.exports = class saleController {
         if (err.errors && err.errors.length > 0 && err.errors[0].message) {
             errorDesription = err.errors[0].message
         }
-        next(new RestError(errorDesription, http_code));
+        return next(new RestError(errorDesription, http_code));
     }
 }

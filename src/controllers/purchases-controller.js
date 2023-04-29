@@ -19,29 +19,29 @@ module.exports = class purchaseController {
     async createPurchase(req, res, next) {
         try{
             if (!req?.user?.companyId) {
-                next(new RestError('companyIdRequired', 400));    
+                return next(new RestError('companyIdRequired', 400));  
             }
             
             req.body.companyId = req?.user?.companyId
 
             if(!req.body.providerId) {
-                next(new RestError('providerId required.', 400));
+                return next(new RestError('providerId required.', 400));
             }
 
             if (!req.body.productsPurchased || !Array.isArray(req.body.productsPurchased)) {
-                next(new RestError('productsPurchased required. You need to send an array of products please.', 400));    
+                return next(new RestError('productsPurchased required. You need to send an array of products please.', 400));    
             }
 
             let company = await this.companyRepository.getCompany(req.user.companyId)
 
             if (!company) {
-                next(new RestError('Company doesn\'t exist.', 404));    
+                return next(new RestError('Company doesn\'t exist.', 404));   
             }
 
             let provider = await this.providerRepository.getProvider(req.body.providerId)
 
             if(!provider) {
-                next(new RestError('Provider doesn\'t exist.', 404));
+                return next(new RestError('Provider doesn\'t exist.', 404));
             }
 
             try {
@@ -75,7 +75,7 @@ module.exports = class purchaseController {
     async getPurchase(req, res, next) {
         const id = req.params.id;
         if (!id) {
-            next(new RestError('id required', 400));    
+            return next(new RestError('id required', 400));    
         }
         try{
             let purchase = await this.purchaseRepository.getPurchase(id, req?.user?.companyId);
@@ -93,7 +93,7 @@ module.exports = class purchaseController {
                 }
                 res.json(totalPurchaseInfo);
             } else {
-                next(new RestError(`purchase not found`, 404));    
+                return next(new RestError(`purchase not found`, 404));    
             }
         }catch(err){
             this.handleRepoError(err, next)
@@ -142,6 +142,6 @@ module.exports = class purchaseController {
     async handleRepoError(err, next) {
         //error de base de datos.
         let http_code = (err.code == 11000)?409:400;
-        next(new RestError(err.message, http_code));
+        return next(new RestError(err.message, http_code));
     }
 }

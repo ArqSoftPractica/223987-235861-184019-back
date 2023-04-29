@@ -11,7 +11,7 @@ module.exports = class SaleReportController {
     async getSaleReport(req, res, next) {
         try{
             if (!req.params.companyId) {
-                next(new RestError('companyId Required', 400));    
+                return next(new RestError('companyId Required', 400));    
             }
 5
             let topSalesReport = await this.saleReportRepository.getTopSalesReport(req.params.companyId, req.query.limit);
@@ -39,6 +39,6 @@ module.exports = class SaleReportController {
         if (err.errors && err.errors.length > 0 && err.errors[0].message) {
             errorDesription = err.errors[0].message
         }
-        next(new RestError(errorDesription, http_code));
+        return next(new RestError(errorDesription, http_code));
     }
 }
