@@ -17,6 +17,8 @@ const purchase = require('./src/routes/purchase');
 
 var salesReportQueue = require("./src/service/sales-bull-queue-service");
 
+var logger = require("./src/logger/systemLogger")
+
 app.use(cors())
 app.use(user)
 app.use(company)
@@ -40,12 +42,14 @@ app.use((err,req ,res, next) => {
     if (req.user && req.user._id) {
         logErrorMessage = `USER: ${req.user._id} ` + logErrorMessage
     }
+    logger.logError(logErrorMessage, err)
     res.status(errorStatus);
     res.json({error:err.message});
 });
 
 const server = app.listen(process.env.PORT ?? 3000, function(){
-    console.log(`Listening to port ${process.env.PORT ?? 3000}`);
+    const logText = `Listening to port ${process.env.PORT ?? 3000}`
+    logger.logInfo(logText)
 });
 
 (async() => {

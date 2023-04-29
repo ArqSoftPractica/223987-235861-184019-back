@@ -50,7 +50,6 @@ module.exports = (sequelize, DataTypes, Company) => {
     });
     
     User.beforeCreate((user, options) => {
-        console.log(user);
         user.password = crypto.createHash('sha256').update(user.password).digest('hex');
         return user
     })

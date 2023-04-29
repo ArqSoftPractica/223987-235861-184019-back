@@ -3,6 +3,7 @@ const app       = express();
 const crypto = require('crypto')
 const CompanyRepository = require('../repositories/company-repository');
 const companyRepository = new CompanyRepository()
+const logger = require('../logger/systemLogger');
 
 async function verifyCompanyApiKey(req, res, next) {
     try {
@@ -15,7 +16,9 @@ async function verifyCompanyApiKey(req, res, next) {
                     req.company = company;
                     next();
                 } else {
-                    return res.status(401).send('Invalid api key.');    
+                    let errorMessage = 'Invalid api key.'
+                    logger.logError(errorMessage);
+                    return res.status(401).send(errorMessage);    
                 }
             } catch (error) {
                 return res.status(401).send({ error: error.message });
