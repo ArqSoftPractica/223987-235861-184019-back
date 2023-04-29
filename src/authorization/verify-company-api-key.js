@@ -21,14 +21,17 @@ async function verifyCompanyApiKey(req, res, next) {
                     return res.status(401).send(errorMessage);    
                 }
             } catch (error) {
+                logger.logError(error.message, error);
                 return res.status(401).send({ error: error.message });
             }
         } else {
             let errorMessage = 'No api key provided. Api key is required.'
+            logger.logError(errorMessage);
             return res.status(401).send({ error:errorMessage });
         }
     } catch (error) {
         let errorMessage = `Please send api key in the header in form of: x-api-key. Error: ${error.message} ==> Error: 401`
+        logger.logError(errorMessage);
         return res.status(401).send({ error: errorMessage });
     }
 }
