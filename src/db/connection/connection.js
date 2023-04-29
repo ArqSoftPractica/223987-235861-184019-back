@@ -12,6 +12,7 @@ const ProductPurchase = require('../models/productPurchase')
 const Sale = require('../models/sale')
 const ProductSale = require('../models/productSale')
 const SaleReport = require('../models/saleReport')
+const logger = require('../../logger/systemLogger')
 
 const sequelize = new Sequelize(
     'asp-obli-1',
@@ -26,20 +27,20 @@ const sequelize = new Sequelize(
 sequelize
   .authenticate()
   .then(() => {
-    console.log('Connection has been established successfully.');
+    logger.logInfo('Sequelize Connection has been established successfully.')
   })
   .catch((error) => {
-    console.error('Unable to connect to the database: ', error);
+    logger.logInfo('Unable to connect to the database: ', error)
   })
 
 sequelize
   .addHook('afterConnect', (connection) => {
     connection.on('error', (error) => {
-      console.error('Sequelize connection error:', error);
+      logger.logError('Sequelize connection error:', error)
     });
   
     connection.on('end', () => {
-      console.error('Sequelize connection disconnected.');
+      logger.logError('Sequelize connection disconnected.')
     });
   });
 

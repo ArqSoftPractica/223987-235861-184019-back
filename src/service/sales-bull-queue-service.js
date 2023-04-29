@@ -1,5 +1,6 @@
 const Queue = require("bull");
 const SalesReportRepository = require("../repositories/saleReport-repository")
+const logger = require('../logger/systemLogger')
 
 module.exports.initSalesReportQueue = async function () {
   var eventQueryQueue = new Queue("sale-queue");
@@ -8,21 +9,22 @@ module.exports.initSalesReportQueue = async function () {
     try {
       if (job.data) {
             try {
-                console.log('sales-queue: Will process job with data: ' + job.data)
+                logger.logInfo('sales-queue: Will process job with data: ' + job.data)
+
                 let allSalesReported = salesReportRepository.upsertSalesReport(job.data)
 
-                console.log('sales-queue: Processed data: ' + JSON.stringify(allSalesReported))
+                logger.logInfo('sales-queue: Processed data: ' + JSON.stringify(allSalesReported))
                 done();   
             } catch (err) {
-                console.log('sales-queue:Error when trying to process data in job...' + err.message)
+                logger.logInfo('sales-queue:Error when trying to process data in job...' + err.message)
                 done(Error('Error when trying to process data in job...'));    
             }
       } else {
-          console.log('sales-queue:No data in job...')
+          logger.logInfo('sales-queue:No data in job...')
           done(Error('No data in job...'));
       }
     } catch (err) {
-      logger.logError(`sales-queue:${err.message}`);
+      logger.logError(`sales-queue:${err.message}`, err);
       done(Error(err.message));
     }
   })

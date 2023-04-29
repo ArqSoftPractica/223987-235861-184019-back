@@ -2,6 +2,7 @@ const Redis = require('redis');
 const redisHost = process.env.REDIS_HOST;
 const redisPort = process.env.REDIS_PORT;
 const redisPassword = process.env.REDIS_PASSWORD;
+const logger = require('../../logger/systemLogger')
 
 const RedisClient = Redis.createClient({
     host: redisHost,
@@ -12,11 +13,11 @@ const RedisClient = Redis.createClient({
 RedisClient.connect();
 
 RedisClient.on('connect', function() {
-    console.log('Cliente conectado a redis');
+    logger.logInfo('Cliente conectado a redis')
 });
 
 RedisClient.on('error', function(err) {
-    console.log('Error =>',err);
+    logger.logError('Sequelize connection error:', err)
 });
 
 module.exports = RedisClient

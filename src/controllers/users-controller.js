@@ -85,7 +85,6 @@ module.exports = class UsersController {
                     }
                 })
                 .catch(function (error) {
-                    console.log('Error', error.message);
                     next(new RestError(error.message, error.response.status));
                 });
         } catch (err) {
