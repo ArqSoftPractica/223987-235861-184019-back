@@ -13,8 +13,8 @@ async function verifyCompanyApiKey(req, res, next) {
                 const hashedApiKey = crypto.createHash('sha256').update(apiKey).digest('hex');
                 let company = await companyRepository.getCompanyByApiKey(hashedApiKey);
                 if (company) {
-                    req.company = company;
-                    next();
+                    req.companyId = company.id;
+                    return next();
                 } else {
                     let errorMessage = 'Invalid api key.'
                     logger.logError(errorMessage);

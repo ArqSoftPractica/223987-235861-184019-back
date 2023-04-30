@@ -3,13 +3,13 @@ const app       = express();
 const crypto = require('crypto')
 const logger = require('../logger/systemLogger');
 
-async function verifyCompanyId(req, res, next) {
+async function verifyReqCompanyIdEqualReqCompanyId(req, res, next) {
     try {
-        let companyId = req.user?.companyId;
-        const paramCompanyId= req.params?.companyId;
+        let companyId = req?.companyId;
+        const paramCompanyId = req.params?.companyId;
         if (paramCompanyId && companyId == paramCompanyId) {
             try {                
-                next();
+                return next();
             } catch (error) {
                 logger.logError(error.message, error);
                 return res.status(401).send({ error: error.message });
@@ -26,4 +26,4 @@ async function verifyCompanyId(req, res, next) {
     }
 }
 
-module.exports = verifyCompanyId;
+module.exports = verifyReqCompanyIdEqualReqCompanyId;

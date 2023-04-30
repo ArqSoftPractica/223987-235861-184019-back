@@ -3,24 +3,22 @@ const app       = express();
 const rolePermissions = require("../constants");
 const logger = require('../logger/systemLogger');
 
-function verifyRole(rolesWithAccess) {
-    return async (req, res, next) => {
+async function verifyTestRole(req, res, next) {
         let role = req.user.role
         
         if (role) {
-            if (role == rolePermissions.roles.master || role == rolePermissions.roles.admin || (rolesWithAccess && Object.values(rolesWithAccess).includes(role))) {
+            if (role == rolePermissions.roles.test) {
                 return next();
             } else {
-                let errorMessage = "Unauthorized. You do not have the correct permissions for this action.";
+                const errorMessage ="Unauthorized. You do not have the correct permissions for this action."
                 logger.logError(errorMessage);
                 return res.status(403).json({error: errorMessage});
             }
         } else {
-            let errorMessage = "Unauthorized.";
+            const errorMessage = "Unauthorized. User does not have a role."
             logger.logError(errorMessage);
             return res.status(403).json({error: errorMessage});
         }
-    }
 }
   
-module.exports = verifyRole;
+module.exports = verifyTestRole;

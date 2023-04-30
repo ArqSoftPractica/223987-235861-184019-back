@@ -4,12 +4,12 @@ const SaleReportController = require('../controllers/salesReport-controller')
 const saleReportController = new SaleReportController();
 const verifyCompanyApiKey = require('../authorization/verify-company-api-key');
 const verifyToken = require('../authorization/verify-token');
-const verifyCompanyId = require('../authorization/verify-company-id');
-const verifyPermission = require("../authorization/role-check");
+const verifyTestRole = require("../authorization/verify-role-test");
+const verifyReqCompanyIdEqualReqCompanyId = require("../authorization/verify-req-company-id-equal-param-company-id")
 
 Router.use(express.json());
 
-Router.get('/saleReport/:companyId', verifyToken, verifyPermission(), verifyCompanyId, (req, res, next) => saleReportController.getSaleReport(req, res, next));
-Router.get('/saleReport', verifyCompanyApiKey, (req, res, next) => saleReportController.getAllSalesReport(req, res, next));
+Router.get('/saleReport/:companyId', verifyCompanyApiKey, verifyReqCompanyIdEqualReqCompanyId, (req, res, next) => saleReportController.getSaleReportFromReqCompanyId(req, res, next));
+Router.get('/saleReportTest/:companyId', verifyToken, verifyTestRole, (req, res, next) => saleReportController.getSaleReportFromReqCompanyId(req, res, next));
 
 module.exports = Router

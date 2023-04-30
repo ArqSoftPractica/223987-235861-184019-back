@@ -3,7 +3,7 @@ const Router    = express.Router();
 const CompanyController = require('../controllers/companies-controller');
 const verifyToken = require("../authorization/verify-token");
 const verifyPermission = require("../authorization/role-check");
-const verifyCompanyId = require("../authorization/verify-company-id");
+const verifyCompanyId = require("../authorization/verify-company-id-same-as-user-company-id");
 const verifyOnlyMasterToken = require("../authorization/verify-role-master");
 const companyController = new CompanyController();
 
