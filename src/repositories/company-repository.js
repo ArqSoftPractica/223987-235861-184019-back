@@ -6,6 +6,10 @@ module.exports = class CompanyRepository {
         const company = await Company.create({ name: companyName, apiKey: apiKey});
         return company;
     }
+    
+    async deleteCompany(companyName) {
+        return await Company.destroy({ name: companyName});
+    }
 
     async getCompanyByName(companyName) {
         const company = await Company.findOne({ where: { name: companyName } });

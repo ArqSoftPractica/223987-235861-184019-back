@@ -11,6 +11,7 @@ const RedisClient = require('../db/connection/redis-connection');
 const { default: axios } = require('axios');
 const sendinblueApiKey = process.env.SENDIN_BLUE_API_KEY;
 const emailTemplateId = 1;
+const constants = require("../constants")
 
 module.exports = class UsersController {
     constructor() {
@@ -108,13 +109,21 @@ module.exports = class UsersController {
 
     async register(req, res, next) {
         try {
-            const token = req.body.token;
+            if (!req.body) {
+                return next(new RestError('No body for registration', 400))
+            }
+
+            const token = req.body?.token;
         
             if (!token) {
                 return next(new RestError('Register token required in body. Email should have had that token', 400));
             }
             const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
             let data = await RedisClient.get(hashedToken);
+
+            if (req.body.role == constants.roles.admin && req.body.roles.employee) {
+                return next(new RestError('Only ADMIN or EMPLOYEE users are able to register through this method. Please ask the admin that sent the invite to send it again correctly.', 400))
+            }
 
             if (data) {
                 const tokenData = JSON.parse(data);
@@ -229,6 +238,14 @@ module.exports = class UsersController {
             let companyName = req.body.companyName;
             let company = await this.companyRepository.getCompanyByName(companyName);
             let apiKey = undefined
+
+            if (!req.body) {
+                return next(new RestError(`Please send the user information`, 400));    
+            }
+
+            if (req.body.role != constants.roles.admin) {
+                return next(new RestError(`Only admins are allowed to be created via this method. To create other roles, please ask an admin of the company you want to send you an invite, or if the company is not created yet, please create the company and invite other ADMIN or EMPLOYEE users.`, 400));    
+            }
             
             if (company) {
                 return next(new RestError(`Company with that name already registered:\n\n  • Select a new name to create a Company.\n\n    • Ask a Company Admin send you an invite link or contact support.`, 400));    
@@ -238,21 +255,25 @@ module.exports = class UsersController {
             }
 
             req.body.companyId  = company.id;
-
-            let userCreated = await this.userRepository.createUser(req.body);
-            req.body.companyApiKey = apiKey
-            
-            res.json({
-                id: userCreated.id,
-                userName: userCreated.userName,
-                password: userCreated.password,
-                email: userCreated.email,
-                companyId: userCreated.companyId,
-                role: userCreated.role,
-                updatedAt: userCreated.updatedAt,
-                createdAt: userCreated.createdAt,
-                companyApiKey: apiKey
-            });
+            try {
+                let userCreated = await this.userRepository.createUser(req.body);
+                req.body.companyApiKey = apiKey
+                
+                res.json({
+                    id: userCreated.id,
+                    userName: userCreated.userName,
+                    password: userCreated.password,
+                    email: userCreated.email,
+                    companyId: userCreated.companyId,
+                    role: userCreated.role,
+                    updatedAt: userCreated.updatedAt,
+                    createdAt: userCreated.createdAt,
+                    companyApiKey: apiKey
+                });
+            } catch (err) {
+                await this.companyRepository.deleteCompany(companyName, apiKey);
+                this.handleRepoError(err, next)    
+            }
         } catch (err) {
             this.handleRepoError(err, next)
         }
