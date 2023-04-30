@@ -81,17 +81,8 @@ module.exports = class purchaseController {
             let purchase = await this.purchaseRepository.getPurchase(id, req?.user?.companyId);
             if (purchase) {
                 let productPurchases = await this.productPurchaseRepository.getProductsPurchasesFromPurchase(id)
-                let totalPurchaseInfo = {
-                    id: purchase.id,
-                    date: purchase.date,
-                    companyId: purchase.companyId,
-                    providerId: purchase.providerId,
-                    totalCost: purchase.totalCost,
-                    updatedAt: purchase.updatedAt,
-                    createdAt: purchase.createdAt,
-                    productPurchases: productPurchases,
-                }
-                res.json(totalPurchaseInfo);
+                purchase.productPurchases = productPurchases
+                res.json(purchase);
             } else {
                 return next(new RestError(`purchase not found`, 404));    
             }
@@ -105,17 +96,7 @@ module.exports = class purchaseController {
             let purchases = await this.purchaseRepository.getPurchases(req?.user?.companyId);
             for (let i = 0; i < purchases.length; i++) {
                 let productPurchases = await this.productPurchaseRepository.getProductsPurchasesFromPurchase(purchases[i].id)
-                let totalPurchaseInfo = {
-                    id: purchases[i].id,
-                    date: purchases[i].date,
-                    companyId: purchases[i].companyId,
-                    providerId: purchases[i].providerId,
-                    totalCost: purchases[i].totalCost,
-                    updatedAt: purchases[i].updatedAt,
-                    createdAt: purchases[i].createdAt,
-                    productPurchases: productPurchases,
-                }
-                purchases[i] = totalPurchaseInfo;
+                purchases[i].productPurchases = productPurchases;
             }
             res.json(purchases);
         } catch (err) { 
@@ -128,15 +109,12 @@ module.exports = class purchaseController {
             const id = req.params.id;
             const from = req.query.from;
             const to = req.query.to;
-
             let purchases = await this.purchaseRepository.getPurchasesPerProvider(id, from, to);
             
             res.json(purchases);
-
         }catch(err){
             this.handleRepoError(err, next)
         }
-
     }
 
     async handleRepoError(err, next) {
