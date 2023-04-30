@@ -1,8 +1,7 @@
 const express = require('express');
-const Router    = express.Router()
-const ProviderController = require('../controllers/providers-controller')
+const Router    = express.Router();
+const ProviderController = require('../controllers/providers-controller');
 const verifyToken = require("../authorization/verify-token");
-const verifyPermission = require("../authorization/role-check");
 const verifyRole = require('../authorization/role-check');
 const providerController = new ProviderController();
 
