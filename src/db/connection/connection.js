@@ -2,7 +2,7 @@ require('dotenv').config();
 const Sequelize = require("sequelize");
 const { DataTypes } = require('sequelize');
 const dbUri = process.env.MY_SQL_URI || "localhost";
-const dbPassword = process.env.DB_PASSWORD || "asp2023**";
+const dbPassword = process.env.DB_PASSWORD;
 const User = require('../models/users')
 const Company = require('../models/company')
 const Provider = require('../models/provider')
@@ -15,8 +15,8 @@ const SaleReport = require('../models/saleReport')
 const logger = require('../../logger/systemLogger')
 
 const sequelize = new Sequelize(
-    'asp-obli-1',
-    'root',
+    process.env.MY_SQL_DATABASE_NAME,
+    process.env.MY_SQL_USERNAME,
     dbPassword,
      {
        host: dbUri,
