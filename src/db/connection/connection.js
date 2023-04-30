@@ -44,6 +44,15 @@ sequelize
     });
   });
 
+sequelize.isDatabaseConnected = async () => {
+  try {
+    let result = await sequelize.authenticate()
+    return undefined
+  } catch (err) {
+    return err
+  }
+}
+
 const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
