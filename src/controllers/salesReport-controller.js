@@ -10,23 +10,24 @@ module.exports = class SaleReportController {
 
     async getSaleReport(req, res, next) {
         try{
-            if (!req.params.companyId) {
+            if (!req?.params?.companyId) {
                 return next(new RestError('companyId Required', 400));    
             }
-5
+
             let topSalesReport = await this.saleReportRepository.getTopSalesReport(req.params.companyId, req.query.limit);
 
-            res.json(topSalesReport);
+            return res.json(topSalesReport);
         } catch (err) {
             this.handleRepoError(err, next)
         }
     }
 
-    async getAllSalesReport(req, res, next) {
+    async getSaleReportFromReqCompanyId(req, res, next) {
         try{
-            let topSalesReport = await this.saleReportRepository.getAll();
 
-            res.json(topSalesReport);
+            let topSalesReport = await this.saleReportRepository.getTopSalesReport(req?.companyId, req.query.limit);
+
+            return res.json(topSalesReport);
         } catch (err) {
             this.handleRepoError(err, next)
         }

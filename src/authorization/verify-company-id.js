@@ -9,7 +9,7 @@ async function verifyCompanyId(req, res, next) {
         const paramCompanyId= req.params?.companyId;
         if (paramCompanyId && companyId == paramCompanyId) {
             try {                
-                next();
+                return next();
             } catch (error) {
                 logger.logError(error.message, error);
                 return res.status(401).send({ error: error.message });

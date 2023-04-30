@@ -15,12 +15,12 @@ async function verifyToken(req, res, next) {
                 jwt.verify(token, PUBLIC_KEY, {algorithm:  "RS256"}, function(err, usr){ 
                     if(err){
                         logger.logError(err.message, err);
-                        res.status(401).send({ error:err.message});
+                        return res.status(401).send({ error:err.message});
                     }
                     else{
                         //Add user for all subsequent calls
                         req.user = usr;
-                        next();
+                        return next();
                     }
                 }); 
             } catch (error) {
