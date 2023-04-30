@@ -9,7 +9,7 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const RedisClient = require('../db/connection/redis-connection');
 const { default: axios } = require('axios');
-const sendinblueApiKey = "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";
+const sendinblueApiKey = process.env.SENDIN_BLUE_API_KEY;
 const emailTemplateId = 1;
 
 module.exports = class UsersController {
@@ -52,12 +52,26 @@ module.exports = class UsersController {
             const oneWeekInSeconds = 7 * 24 * 60 * 60; 
             const expirationTime = new Date(currentDate.getTime() + oneWeekInSeconds * 1000);
             const userData = { companyId: companyId, email: email, expirationDate: expirationTime, role: roleToAssign };
-            
-            RedisClient.set(token, JSON.stringify(userData));
-            RedisClient.expire(token, oneWeekInSeconds);
+            const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+            RedisClient.set(hashedToken, JSON.stringify(userData));
+            RedisClient.expire(hashedToken, oneWeekInSeconds);
             
             const registrationUrl = `https://www.asp2023.com/register?companyName=${company.name}&token=${token}`;
             
+            const options = {
+                timeZone: "UTC",
+                timeZoneName: "short",
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                hour: "numeric",
+                minute: "numeric",
+                second: "numeric",
+            };
+
+            const formattedExpirationDate = expirationTime.toLocaleDateString("en-US", options)
+
             let body = {
                 to: [{ email: email }],
                 templateId: emailTemplateId,
@@ -65,7 +79,7 @@ module.exports = class UsersController {
                     recipient_email: email,
                     company_name: company.name,
                     registration_link: registrationUrl,
-                    valid_through: expirationTime
+                    valid_through: formattedExpirationDate
                 }
             };
             
@@ -99,8 +113,8 @@ module.exports = class UsersController {
             if (!token) {
                 return next(new RestError('Register token required in body. Email should have had that token', 400));
             }
-
-            let data = await RedisClient.get(token);
+            const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+            let data = await RedisClient.get(hashedToken);
 
             if (data) {
                 const tokenData = JSON.parse(data);
@@ -117,31 +131,31 @@ module.exports = class UsersController {
                     
                                 req.body.password = undefined
                                 //Delete token so that the invite doesn't work anymore
-                                RedisClient.del(token);
+                                RedisClient.del(hashedToken);
                                 res.json(userCreated);
                             } catch (err) {
                                 this.handleRepoError(err, next)
                             }
                         } else {
-                            this.clearTokenFromRedisSendError(token, next);
+                            this.clearTokenFromRedisSendError(hashedToken, next);
                         }
                     } else {
-                        this.clearTokenFromRedisSendError(token, next);
+                        this.clearTokenFromRedisSendError(hashedToken, next);
                     }
                 } else {
-                    this.clearTokenFromRedisSendError(token, next);
+                    this.clearTokenFromRedisSendError(hashedToken, next);
                 }
             } else {
-                this.clearTokenFromRedisSendError(token, next);
+                this.clearTokenFromRedisSendError(hashedToken, next);
             }
         } catch (err) {
             this.handleRepoError(err, next)
         }
     }
 
-    clearTokenFromRedisSendError(token, next) {
+    clearTokenFromRedisSendError(hashedToken, next) {
         //deleting token for security
-        RedisClient.del(token);
+        RedisClient.del(hashedToken);
         return next(new RestError('Invald, expired or already used registration link', 400));
     }
 
