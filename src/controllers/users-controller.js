@@ -58,7 +58,7 @@ module.exports = class UsersController {
             RedisClient.set(hashedToken, JSON.stringify(userData));
             RedisClient.expire(hashedToken, oneWeekInSeconds);
             
-            const registrationUrl = `https://www.asp2023.com/register?companyName=${company.name}&token=${token}`;
+            const registrationUrl = `${process.env.REGISTER_LINK_BASE_URL}/register?companyName=${company.name}&token=${token}`;
             
             const options = {
                 timeZone: "UTC",
