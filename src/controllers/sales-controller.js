@@ -1,3 +1,4 @@
+require('dotenv').config({ path: `./.env.${process.env.NODE_ENV}` });
 const express   = require('express');
 const Router    = express.Router();
 const RestError = require('./rest-error');
@@ -13,7 +14,7 @@ module.exports = class saleController {
         this.saleRepository = new SaleRepository();
         this.productSaleRepository = new ProductSaleRepository();
         this.comanyRepository = new CompanyRepository();
-        this.salesQueue = new Bull("sale-queue");
+        this.salesQueue = new Bull("sale-queue", process.env.REDIS_URL);
     }
 
     async createSale(req, res, next) {
