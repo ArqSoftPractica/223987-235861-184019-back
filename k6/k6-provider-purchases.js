@@ -23,7 +23,7 @@ export default function () {
   const providerId = "1ed4c34b-231d-43ed-b107-5f9ef2221aac"
   const from = "2023-03-23"
   const to = "2023-06-25"
-  const res = http.get(`http://localhost:3000/purchases/provider/${providerId}?from="${from}"&to="${to}"`, { headers });
+  const res = http.get(`http://backend-ellis-jodus-reyes.us-east-1.elasticbeanstalk.com/purchases/provider/${providerId}?from="${from}"&to="${to}"`, { headers });
 
   check(res, {
     'Get status is 200': (r) => res.status === 200
