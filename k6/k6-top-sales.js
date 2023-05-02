@@ -21,7 +21,7 @@ export default function () {
   const companyApiKey = '6ab3f306fd45eaf517c7d1a1b5bab26859f061ebff3ba2e8ade086338eed659b';
   const companyId = 'e8634d76-908c-40f4-94a6-97a55dd1b6f2';
   const headers = { 'Content-Type': 'application/json', 'x-api-key': companyApiKey };
-  const res = http.get(`http://localhost:3000/saleReport/${companyId}`, { headers });
+  const res = http.get(`http://backend-ellis-jodus-reyes.us-east-1.elasticbeanstalk.com/saleReport/${companyId}`, { headers });
 
   check(res, {
     'Get status is 200': (r) => res.status === 200

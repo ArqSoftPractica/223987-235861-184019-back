@@ -19,11 +19,11 @@ export const options = {
 
 export default function () {
   // do requests using test User
-  const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer eyJhbGciOiJSUzI1NiJ9.eyJpZCI6IjQyYWE3YTVmLWQ1NDQtNGIyNy04YTFjLTE0OGU1MGZlYTkxYyIsInVzZXJOYW1lIjoidGhpc0lzVGVzdEFjY291bnQiLCJlbWFpbCI6InRoaXNJc1Rlc3RBY2NvdW50QHRlc3QuY29tIiwiY29tcGFueUlkIjoiMWQ5ZWU2N2QtZWI0Ni00MzA5LTgzZTAtYWZlYzU3ODljNmU0Iiwicm9sZSI6IlRFU1QiLCJjcmVhdGVkQXQiOiIyMDIzLTA0LTMwVDE2OjU1OjE1LjAwMFoiLCJ1cGRhdGVkQXQiOiIyMDIzLTA0LTMwVDE2OjU1OjE1LjAwMFoifQ.m-QMdHtChKL79moFdPN5hewMtL6sr8gKnPDeQtZKLkM12UtlZoWhhEkcoVnfW1U5Td8uEYPsTEhit5JxVWuXs1wbbM2NGbItDjs5egwZsfyx2Cgje_w-RI4vS8H8i0EMBAGV-9yjWjxFBlS-A_vcFio-fUY4fyKk7YS6NCRtGUvnC0Y3_R4zdBJK-52gNEYgZ16rsf0pVFAo6zGk7wPTcS-AjF98p878fFuz0mu1WNhIh_fgYWy-ck-b9ECtO36gkMhGk9G5j1izqDNYdvLkaLelsBRKNcTba02McJxYrzY6vaWatL2pK614QXsb-h9LijNiUkRx1_uRsNLbLAp7zw` };
-  const providerId = "b93b3f29-47aa-4d92-8895-100546e0c5b7"
+  const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer eyJhbGciOiJSUzI1NiJ9.eyJpZCI6IjY4Mjg0ODUwLTAyNDMtNGY1NC05ZjNkLTYxNTExNjE5OTcxMiIsInVzZXJOYW1lIjoiVGVzdCIsImVtYWlsIjoidGVzdFNhbGVzQHRlc3RTYWxlcy5jb20iLCJjb21wYW55SWQiOiIxYTQ0MzcyNi1jZTEwLTQ0ZjAtYmI0My1hZTI0NTEwNGYyNzgiLCJyb2xlIjoiVEVTVCIsImNyZWF0ZWRBdCI6IjIwMjMtMDUtMDJUMDE6MTk6MzkuMDAwWiIsInVwZGF0ZWRBdCI6IjIwMjMtMDUtMDJUMDE6MTk6MzkuMDAwWiJ9.Fq-MfJHIHlCWhRL6EpcrhjASmK4J1d4NsZQh2VkXj0U0eDIxu748CtNhVxC3NdHVmcnTVkpl7gmbH5MUXidHzJTGjRIlqAj3mfqhWJQlgYRxVahDgkkZoSAbnWRgycSpWu9YVZmB9-G4g7F41twWntB1tY3D07NySxHIDsZAbQrjZaDsvQNprr1iyMAOxjwXG0cDDSGLFxMGQMcJ8SRyGt3GNpf1egJc8J4P-V7sPYRVkjXTLTQgSyDmcWNd_Afq9QdjaJLcDtu08bqGmm7JADpz08L52hlher8JwyA2uZoTDG8dgRKah-j_BY2qOQumEWwdMNSIggoKV59p3nVnDQ` };
+  const providerId = "b8c6d7ff-39b4-4608-8674-a69f2fd891b1"
   const from = "2023-03-23"
   const to = "2023-12-25"
-  const res = http.get(`http://localhost:3000/purchasesTest/provider/${providerId}?from="${from}"&to="${to}"`, { headers });
+  const res = http.get(`http://backend-ellis-jodus-reyes.us-east-1.elasticbeanstalk.com/purchasesTest/provider/${providerId}?from="${from}"&to="${to}"`, { headers });
 
   check(res, {
     'Get status is 200': (r) => res.status === 200
