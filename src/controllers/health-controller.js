@@ -1,4 +1,5 @@
 const express   = require('express');
+const version = require('../../package.json').version;
 const RestError = require('./rest-error');
 const dbConnection = require('../db/connection/connection')
 const redisConnection = require('../db/connection/redis-connection')
@@ -15,6 +16,7 @@ module.exports = class HealthController {
                 available: true,
                 dbConnection: !dbError,
                 redisConnection: isRedisConnected,
+                version: version
             }
             res.json(health);
         } catch (err) {

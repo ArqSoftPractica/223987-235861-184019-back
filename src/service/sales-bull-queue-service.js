@@ -3,7 +3,7 @@ const SalesReportRepository = require("../repositories/saleReport-repository")
 const logger = require('../logger/systemLogger')
 
 module.exports.initSalesReportQueue = async function () {
-  var eventQueryQueue = new Queue("sale-queue");
+  var eventQueryQueue = new Queue("sale-queue", process.env.REDIS_URL);
   var salesReportRepository = new SalesReportRepository();
   eventQueryQueue.process(async (job, done) => {
     try {

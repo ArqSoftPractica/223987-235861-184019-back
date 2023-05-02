@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ path: `./.env.${process.env.NODE_ENV}` });
 const Sequelize = require("sequelize");
 const { DataTypes } = require('sequelize');
 const dbUri = process.env.MY_SQL_URI || "localhost";

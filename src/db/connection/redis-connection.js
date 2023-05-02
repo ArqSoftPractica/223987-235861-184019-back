@@ -1,28 +1,22 @@
-require('dotenv').config();
+require('dotenv').config({ path: `./.env.${process.env.NODE_ENV}` });
 const Redis = require('redis');
-const redisHost = process.env.REDIS_HOST;
-const redisPort = process.env.REDIS_PORT;
-const redisPassword = process.env.REDIS_PASSWORD;
-const logger = require('../../logger/systemLogger')
-
+const redisUrl = process.env.REDIS_URL;
 
 const RedisClient = Redis.createClient({
-    host: redisHost,
-    port: redisPort,
-    password: redisPassword
-});
+    url: redisUrl
+})
 
 RedisClient.redisIsConnected = false
 
 RedisClient.connect();
 
 RedisClient.on('connect', function() {
-    logger.logInfo('Cliente conectado a redis')
+    console.log('Cliente conectado a redis')
     RedisClient.redisIsConnected = true
 });
 
 RedisClient.on('error', function(err) {
-    logger.logError('Redis connection error:', err)
+    console.log(`Redis connection error: ${err?.message ?? ""}`)
     RedisClient.redisIsConnected = false
 });
 
