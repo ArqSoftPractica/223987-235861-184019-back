@@ -6,7 +6,6 @@ const User = require("../src/db/models/users");
 const UserRepository = require("../src/repositories/user-repository");
 const constants = require("../src/constants");
 const db = require('../src/db/connection/connection');
-const userController = require('../src/controllers/users-controller')
 
 const stubValueUnHashedPassword = 'testPassword1*'
 const stubHashedPassword = "c67100c65e3ab96647156d991a6790ed6fd7d47c2585d0f7441ecf5931a66931"

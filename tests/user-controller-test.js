@@ -8,7 +8,6 @@ const constants = require("../src/constants");
 const db = require('../src/db/connection/connection');
 const UserController = require('../src/controllers/users-controller');
 const CompanyRepository = require('../src/repositories/company-repository');
-const RedisClient = require('../src/db/connection/redis-connection');
 const RestError = require('../src/controllers/rest-error')
 
 const stubValueUnHashedPassword = 'testPassword1*'
@@ -34,15 +33,12 @@ const stubValue = {
 
 
 describe("UserController", function() {
-    let repositroyCreateUserStub;
     let sandbox;
     let next;
-    let error;
-    let sessionObject;
-    let status, json, res, userController, userService;
+    let res, userController;
     let userRepository;
     let companyRepository;
-    let getCompanyStub, getStub, createStub, delStub, createCompanyStub, deleteCompanyStub;
+    let getCompanyStub, createStub, createCompanyStub, deleteCompanyStub;
     
     beforeEach(function () {
         req = { body: {} };
@@ -59,8 +55,6 @@ describe("UserController", function() {
         createCompanyStub = sandbox.stub(companyRepository, 'createCompany');
         createStub = sandbox.stub(userRepository, 'createUser');
         deleteCompanyStub = sandbox.stub(companyRepository, 'deleteCompany');
-        getStub = sandbox.stub(RedisClient, 'get');
-        delStub = sandbox.stub(RedisClient, 'del');
     });
 
     afterEach(function () {
