@@ -2,15 +2,15 @@ name: Tests
 
 on:
   push:
-      branches-ignore:
-        - '*'
-      branches:
-        - '**'
-    pull_request:
-      branches-ignore:
-        - '*'
-      branches:
-        - '**'
+    branches-ignore:
+      - '*'
+    branches:
+      - '**'
+  pull_request:
+    branches-ignore:
+      - '*'
+    branches:
+      - '**'
 
 jobs:
   build:
