@@ -236,10 +236,6 @@ module.exports = class UsersController {
 
     async createUser(req, res, next) {
         try {
-            let companyName = req.body.companyName;
-            let company = await this.companyRepository.getCompanyByName(companyName);
-            let apiKey = undefined
-
             if (!req.body) {
                 return next(new RestError(`Please send the user information`, 400));    
             }
@@ -247,6 +243,10 @@ module.exports = class UsersController {
             if (req.body.role != constants.roles.admin) {
                 return next(new RestError(`Only admins are allowed to be created via this method. To create other roles, please ask an admin of the company you want to send you an invite, or if the company is not created yet, please create the company and invite other ADMIN or EMPLOYEE users.`, 400));    
             }
+
+            let companyName = req.body.companyName;
+            let company = await this.companyRepository.getCompanyByName(companyName);
+            let apiKey = undefined
             
             if (company) {
                 return next(new RestError(`Company with that name already registered:\n\n  • Select a new name to create a Company.\n\n    • Ask a Company Admin send you an invite link or contact support.`, 400));    
@@ -269,7 +269,7 @@ module.exports = class UsersController {
                     role: userCreated.role,
                     updatedAt: userCreated.updatedAt,
                     createdAt: userCreated.createdAt,
-                    companyApiKey: apiKey
+                    companyApiKey: company.apiKey
                 });
             } catch (err) {
                 await this.companyRepository.deleteCompany(companyName, apiKey);
