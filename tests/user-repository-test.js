@@ -28,15 +28,16 @@ describe("UserRepository", function() {
     let sequelizeStubFindOne;
     let sandbox;
     
-    before(function () {
+    beforeEach(function () {
         sandbox = sinon.createSandbox();
         sequelizeStubCreate = sandbox.stub(db.user, 'create').resolves(stubValue);
         sequelizeStubGetAll = sandbox.stub(db.user, 'findAll').resolves([stubValue]);
         sequelizeStubFindOne = sandbox.stub(db.user, 'findOne').resolves(stubValue);
     });
 
-    after(function () {
+    afterEach(function () {
         sandbox.restore();
+        sinon.restore();
     });
 
     it("should add a new user to the db", async function() {
@@ -73,7 +74,7 @@ describe("UserRepository", function() {
         // Use the stub to create a model
         let userRepository = new UserRepository();
         const user = await userRepository.getUser(stubValue.id);
-        expect(sequelizeStubFindOne.calledTwice).to.be.true;
+        expect(sequelizeStubFindOne.calledOnce).to.be.true;
         expect(user.id).to.equal(stubValue.id);
         expect(user.name).to.equal(stubValue.name);
         expect(user.role).to.equal(stubValue.role);
@@ -103,7 +104,7 @@ describe("UserRepository", function() {
         let userRepository = new UserRepository();
         const users = await userRepository.getUsers(stubValue.companyId);
         const user = users[0];
-        expect(sequelizeStubGetAll.calledTwice).to.be.true;
+        expect(sequelizeStubGetAll.calledOnce).to.be.true;
         expect(user.id).to.equal(stubValue.id);
         expect(user.name).to.equal(stubValue.name);
         expect(user.role).to.equal(stubValue.role);
@@ -117,7 +118,7 @@ describe("UserRepository", function() {
         // Use the stub to create a model
         let userRepository = new UserRepository();
         const user = await userRepository.getUserByEmailPassword(stubValue.email, stubValueUnHashedPassword);
-        expect(sequelizeStubFindOne.calledThrice).to.be.true;
+        expect(sequelizeStubFindOne.calledOnce).to.be.true;
         expect(user.id).to.equal(stubValue.id);
         expect(user.name).to.equal(stubValue.name);
         expect(user.role).to.equal(stubValue.role);

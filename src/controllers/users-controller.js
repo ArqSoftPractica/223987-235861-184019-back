@@ -170,12 +170,17 @@ module.exports = class UsersController {
     }
 
     async login(req, res, next) {
+        if (!req.body) {
+            return next(new RestError('Body required', 400));  
+        }
+
         const email = req.body.email;
         let pwd = req.body.password;
         
         if(!email){
             return next(new RestError('email required', 400));  
         }
+        
         if(!pwd){
             return next(new RestError('password required', 400));  
         }

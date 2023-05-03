@@ -32,7 +32,7 @@ const stubValue = {
 };
 
 
-describe("UserController", function() {
+describe("Create User - Register an admin", function() {
     let sandbox;
     let next;
     let res, userController;
@@ -174,5 +174,16 @@ describe("UserController", function() {
         expect(next.args[0][0]).to.be.an.instanceOf(RestError);
         expect(next.args[0][0].status).to.equal(400);
         expect(next.args[0][0].message).to.equal('Repository error');
+    });
+
+    it('should handle repository errors creating stub2', async () => {
+        req.body.role = constants.roles.admin;
+        req.body.companyName = companyValue.name;
+        getCompanyByNameStub.resolves(undefined);
+        createCompanyStub.rejects({ code: 11000, message: 'Database error'});
+        await userController.createUser(req, res, next);
+        expect(createCompanyStub.calledOnce).to.be.true;
+        expect(next.args[0][0]).to.be.an.instanceOf(RestError);
+        expect(next.args[0][0].status).to.equal(409);
     });
 });
