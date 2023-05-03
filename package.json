@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "NODE_ENV=test mocha --exit './tests/*.js'",
-    "coverage": "NODE_ENV=test nyc npm run test",
+    "coverage": "NODE_ENV=test nyc --reporter=lcov --reporter=text npm run test",
     "start": "NODE_ENV=development node index.js",
     "start-prod": "NODE_ENV=production node index.js"
   },
