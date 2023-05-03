@@ -20,17 +20,13 @@ module.exports = (sequelize, DataTypes) => {
         apiKey: {
             type: DataTypes.STRING
         },
+    }, {
+        hooks: {
+            beforeCreate: (company) => {
+                company.apiKey = crypto.createHash('sha256').update(company.apiKey).digest('hex');
+            }
+        }
     });
-
-    Company.beforeCreate((company, options) => {
-        company.apiKey = crypto.createHash('sha256').update(company.apiKey).digest('hex');
-        return company
-    })
-
-    Company.prototype.isCorrectPassword = async function(apiKey) {
-        var hash = crypto.createHash('sha256').update(apiKey).digest('hex');
-        return this.apiKey === hash;
-    }
 
     return Company;
 }
