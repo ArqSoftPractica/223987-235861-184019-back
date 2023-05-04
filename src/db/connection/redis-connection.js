@@ -1,4 +1,4 @@
-require('dotenv').config({ path: `./.env.${process.env.NODE_ENV}` });
+require('dotenv').config();
 const Redis = require('redis');
 const redisUrl = process.env.REDIS_URL;
 
