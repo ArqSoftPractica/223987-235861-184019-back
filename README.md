@@ -64,4 +64,6 @@ En la siguiente tabla se verán reflejados los distintos requerimientos funciona
 
 ## 5. Docker Compose <a name= "docker"></a>
 
+En el repositprio se podrá acceder al archivo docker-compose.yml. Gracias a este archivo, ejecutando únicamente el comando docker-compose up logramos levantar las bases de datos de MySQL, Redis y la aplicación de backend.
+
 ## 6. Guia de despliegue <a name= "despliegue"></a>
