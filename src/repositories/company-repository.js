@@ -1,4 +1,5 @@
 const db = require('../db/connection/connection')
+const crypto = require('crypto');
 const Company = db.company
 
 module.exports = class CompanyRepository {

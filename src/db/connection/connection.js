@@ -1,5 +1,6 @@
 require('dotenv').config({ path: `./.env.${process.env.NODE_ENV}` });
 const Sequelize = require("sequelize");
+const SequelizeMock = require("sequelize-mock");
 const { DataTypes } = require('sequelize');
 const dbUri = process.env.MY_SQL_URI || "localhost";
 const dbPassword = process.env.DB_PASSWORD;
@@ -14,7 +15,16 @@ const ProductSale = require('../models/productSale')
 const SaleReport = require('../models/saleReport')
 const logger = require('../../logger/systemLogger')
 
-const sequelize = new Sequelize(
+let sequelize;
+if(process.env.NODE_ENV === 'test') {
+  sequelize = new Sequelize({
+    dialect: 'sqlite',
+    storage: ':memory:',
+    logging: false,
+  });
+  sequelize.sync()
+} else {
+  sequelize = new Sequelize(
     process.env.MY_SQL_DATABASE_NAME,
     process.env.MY_SQL_USERNAME,
     dbPassword,
@@ -23,6 +33,7 @@ const sequelize = new Sequelize(
        dialect: 'mysql'
      }
    );
+}
 
 sequelize
   .authenticate()
@@ -32,8 +43,9 @@ sequelize
   .catch((error) => {
     logger.logInfo('Unable to connect to the database: ', error)
   })
-
-sequelize
+  
+if(process.env.NODE_ENV !== 'test') {
+  sequelize
   .addHook('afterConnect', (connection) => {
     connection.on('error', (error) => {
       logger.logError('Sequelize connection error:', error)
@@ -43,6 +55,7 @@ sequelize
       logger.logError('Sequelize connection disconnected.')
     });
   });
+}
 
 sequelize.isDatabaseConnected = async () => {
   try {
