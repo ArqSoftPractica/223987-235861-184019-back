@@ -25,7 +25,13 @@ module.exports = (sequelize, DataTypes) => {
             beforeCreate: (company) => {
                 company.apiKey = crypto.createHash('sha256').update(company.apiKey).digest('hex');
             }
-        }
+        },
+        indexes:[
+            {
+                unique: false,
+                fields:['apiKey']
+            }
+        ]
     });
 
     return Company;
