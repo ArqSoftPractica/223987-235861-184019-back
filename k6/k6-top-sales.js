@@ -11,15 +11,15 @@ export const options = {
       duration: '60s', // total duration
       preAllocatedVUs: 50, // to allocate runtime resources
 
-      rate: 50, // number of constant iterations given `timeUnit`
-      timeUnit: '1s',
+      rate: 1200, // number of constant iterations given `timeUnit`
+      timeUnit: '60s',
     },
   },
 };
 
 export default function () {
-  const companyApiKey = '6ab3f306fd45eaf517c7d1a1b5bab26859f061ebff3ba2e8ade086338eed659b';
-  const companyId = 'e8634d76-908c-40f4-94a6-97a55dd1b6f2';
+  const companyApiKey = 'd854e96cac9815750d4012196d88e799c2b097b39f12040e326d609f227bb9f2';
+  const companyId = '0443e7ab-242b-4cfe-a763-b8d39277979c';
   const headers = { 'Content-Type': 'application/json', 'x-api-key': companyApiKey };
   const res = http.get(`http://backend-ellis-jodus-reyes.us-east-1.elasticbeanstalk.com/saleReport/${companyId}`, { headers });
 
