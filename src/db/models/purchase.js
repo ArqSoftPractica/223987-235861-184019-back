@@ -29,11 +29,17 @@ module.exports = (sequelize, DataTypes, Company, Provider) => {
             allowNull: false,
             defaultValue: DataTypes.NOW,
         },
-        
         totalcost: {
             type: DataTypes.FLOAT,
             allowNull: false,
         },
+    },{
+        indexes:[
+            {
+                unique: false,
+                fields:['providerId', 'date']
+            }
+        ]
     });
 
     return Purchase;

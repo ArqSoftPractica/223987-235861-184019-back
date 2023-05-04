@@ -9,18 +9,18 @@ export const options = {
     my_scenario1: {
       executor: 'constant-arrival-rate',
       duration: '60s', // total duration
-      preAllocatedVUs: 50, // to allocate runtime resources
+      preAllocatedVUs: 10, // to allocate runtime resources
 
-      rate: 50, // number of constant iterations given `timeUnit`
-      timeUnit: '1s',
+      rate: 1200, // number of constant iterations given `timeUnit`
+      timeUnit: '60s',
     },
   },
 };
 
 export default function () {
-  const companyApiKey = '6ab3f306fd45eaf517c7d1a1b5bab26859f061ebff3ba2e8ade086338eed659b'
+  const companyApiKey = 'd854e96cac9815750d4012196d88e799c2b097b39f12040e326d609f227bb9f2'
   const headers = { 'Content-Type': 'application/json', 'x-api-key': companyApiKey };
-  const providerId = "1ed4c34b-231d-43ed-b107-5f9ef2221aac"
+  const providerId = "b5841c0f-ac01-4281-8a95-29d6031d85df"
   const from = "2023-03-23"
   const to = "2023-06-25"
   const res = http.get(`http://backend-ellis-jodus-reyes.us-east-1.elasticbeanstalk.com/purchases/provider/${providerId}?from="${from}"&to="${to}"`, { headers });
