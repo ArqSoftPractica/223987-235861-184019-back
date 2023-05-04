@@ -11,8 +11,29 @@ module.exports = class CompanyController {
     async getCompanies(req, res, next) {
         try {
             let companies = await this.companyRepository.getCompanies();
-            
+            companies.forEach(element => {
+                element.apiKey = undefined
+            });
             res.json(companies);
+        } catch (err) {
+            this.handleRepoError(err, next)
+        }
+    }
+
+    async getCompany(req, res, next) {
+        const id = req.params.companyId;
+        if (!id) {
+            return next(new RestError('id required', 400));    
+        }
+
+        try {
+            let company = await this.companyRepository.getCompany(id);
+            if (company) {
+                company.apiKey = undefined
+                res.json(company);
+            } else {
+                return next(new RestError(`Company not found`, 404));    
+            }
         } catch (err) {
             this.handleRepoError(err, next)
         }
@@ -21,6 +42,10 @@ module.exports = class CompanyController {
     async handleRepoError(err, next) {
         //error de base de datos.
         let http_code = (err.code == 11000)?409:400;
-        next(new RestError(err.message, http_code));
+        let errorDesription = err.message
+        if (err.errors && err.errors.length > 0 && err.errors[0].message) {
+            errorDesription = err.errors[0].message
+        }
+        return next(new RestError(errorDesription, http_code));
     }
 }

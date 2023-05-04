@@ -10,6 +10,7 @@ module.exports = class productController {
 
     async createProduct(req, res, next) {
         try {
+            req.body.companyId = req.user.companyId;
             let productCreated = await this.productRepository.createProduct(req.body);
         
             res.json(productCreated);
@@ -21,11 +22,11 @@ module.exports = class productController {
     async getProduct(req, res, next) {
         const id = req.params.id;
         if (!id) {
-            next(new RestError('id required', 400));    
+            return next(new RestError('id required', 400));    
         }
 
         try {
-            let product = await this.productRepository.getProduct(id);
+            let product = await this.productRepository.getProduct(id, req.user?.companyId);
             if (product) {
                 res.json(product);
             } else {
@@ -42,7 +43,8 @@ module.exports = class productController {
             if (req.query.isActive) {
                 queryParams['isActive'] = req.query.isActive == 'true'
             }
-            let products = await this.productRepository.getProducts(queryParams);
+
+            let products = await this.productRepository.getProducts(queryParams, req?.user?.companyId);
             
             res.json(products);
         } catch (err) {
@@ -53,6 +55,7 @@ module.exports = class productController {
     async editProduct(req, res, next) {
         try {
             const id = req.params.id;
+            req.body.companyId = req.user.companyId;
             let product = await this.productRepository.editProduct(id, req.body);
             
             res.json(product);
@@ -64,7 +67,8 @@ module.exports = class productController {
     async deactivateProduct(req, res, next) {
         try {
             const id = req.params.id;
-            let product = await this.productRepository.editProduct(id, {isActive: false});
+            const body = {isActive: false, companyId: req.user?.companyId}
+            let product = await this.productRepository.editProduct(id, body);
             
             res.json(product);
         } catch (err) {
@@ -75,6 +79,10 @@ module.exports = class productController {
     async handleRepoError(err, next) {
         //error de base de datos.
         let http_code = (err.code == 11000)?409:400;
-        next(new RestError(err.message, http_code));
+        let errorDesription = err.message
+        if (err.errors && err.errors.length > 0 && err.errors[0].message) {
+            errorDesription = err.errors[0].message
+        }
+        return next(new RestError(errorDesription, http_code));
     }
 }

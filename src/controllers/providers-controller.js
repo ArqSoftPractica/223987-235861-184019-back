@@ -10,6 +10,7 @@ module.exports = class ProviderController {
 
     async createProvider(req, res, next) {
         try {
+            req.body.companyId = req?.user?.companyId
             let providerCreated = await this.providerRepository.createProvider(req.body);
         
             res.json(providerCreated);
@@ -21,11 +22,11 @@ module.exports = class ProviderController {
     async getProvider(req, res, next) {
         const id = req.params.id;
         if (!id) {
-            next(new RestError('id required', 400));    
+            return next(new RestError('id required', 400));    
         }
 
         try {
-            let provider = await this.providerRepository.getProvider(id);
+            let provider = await this.providerRepository.getProvider(id, req?.user?.companyId);
             if (provider) {
                 res.json(provider);
             } else {
@@ -40,9 +41,10 @@ module.exports = class ProviderController {
         try {
             let queryParams = {};
             if (req.query.isActive) {
-                queryParams['isActive'] = req.query.isActive == 'true'
+                queryParams.isActive = req.query.isActive == 'true'
             }
-            let providers = await this.providerRepository.getProviders(queryParams);
+
+            let providers = await this.providerRepository.getProviders(queryParams, req?.user?.companyId);
             
             res.json(providers);
         } catch (err) {
@@ -53,7 +55,8 @@ module.exports = class ProviderController {
     async editProvider(req, res, next) {
         try {
             const id = req.params.id;
-            let provider = await this.providerRepository.editProvider(id, req.body);
+            req.body.companyId = req?.user?.companyId
+            let provider = await this.providerRepository.editProvider(id, req.body, req?.user?.companyId);
             
             res.json(provider);
         } catch (err) {
@@ -64,7 +67,8 @@ module.exports = class ProviderController {
     async deactivateProvider(req, res, next) {
         try {
             const id = req.params.id;
-            let provider = await this.providerRepository.editProvider(id, {isActive: false});
+            let body = {isActive: false}
+            let provider = await this.providerRepository.editProvider(id, body, req?.user?.companyId);
             
             res.json(provider);
         } catch (err) {
@@ -75,6 +79,10 @@ module.exports = class ProviderController {
     async handleRepoError(err, next) {
         //error de base de datos.
         let http_code = (err.code == 11000)?409:400;
-        next(new RestError(err.message, http_code));
+        let errorDesription = err.message
+        if (err.errors && err.errors.length > 0 && err.errors[0].message) {
+            errorDesription = err.errors[0].message
+        }
+        return next(new RestError(errorDesription, http_code));
     }
 }
